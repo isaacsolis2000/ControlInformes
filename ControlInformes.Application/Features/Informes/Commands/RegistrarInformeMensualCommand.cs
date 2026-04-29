@@ -1,0 +1,12 @@
+using MediatR;
+
+namespace ControlInformes.Application.Features.Informes.Commands;
+
+public record RegistrarInformeMensualCommand(
+    Guid IdPublicador,
+    int Ano,
+    int Mes,
+    bool Participo,
+    int CursosBiblicos,
+    int? Horas
+) : IRequest<Guid>;

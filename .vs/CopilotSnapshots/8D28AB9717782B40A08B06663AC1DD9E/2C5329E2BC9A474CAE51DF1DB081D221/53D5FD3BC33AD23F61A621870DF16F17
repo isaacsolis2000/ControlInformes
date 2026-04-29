@@ -1,0 +1,59 @@
+﻿using ControlInformes.Application.Common;
+using ControlInformes.Application.DTOs;
+using ControlInformes.Application.Features.Publicadores.Commands;
+using ControlInformes.Application.Features.Publicadores.Queries;
+using ControlInformes.Application.Features.Tarjeta.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ControlInformes.API.Controllers;
+
+[ApiController]
+[Route("api/publicadores")]
+public class PublicadoresController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public PublicadoresController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<PublicadorDto>>>> GetAll()
+    {
+        var result = await _mediator.Send(new ObtenerPublicadoresQuery());
+        return Ok(ApiResponse<IReadOnlyList<PublicadorDto>>.Ok(result));
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<ApiResponse<Guid>>> Create([FromBody] CrearPublicadorCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetAll), new { id }, ApiResponse<Guid>.Ok(id, "Publicador creado."));
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse<string>>> Update(Guid id, [FromBody] ActualizarPublicadorCommand command)
+    {
+        if (id != command.IdPublicador)
+            return BadRequest(ApiResponse<string>.Fail("El ID no coincide."));
+
+        await _mediator.Send(command);
+        return Ok(ApiResponse<string>.Ok("Actualizado correctamente."));
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ApiResponse<string>>> Delete(Guid id)
+    {
+        await _mediator.Send(new EliminarPublicadorCommand(id));
+        return Ok(ApiResponse<string>.Ok("Eliminado correctamente."));
+    }
+
+    [HttpGet("{id}/tarjeta")]
+    public async Task<ActionResult<ApiResponse<TarjetaPublicadorDto>>> GetTarjeta(Guid id, [FromQuery] int? añoServicio)
+    {
+        var result = await _mediator.Send(new ObtenerTarjetaPublicadorQuery(id, añoServicio));
+        return Ok(ApiResponse<TarjetaPublicadorDto>.Ok(result));
+    }
+}

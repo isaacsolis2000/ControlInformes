@@ -1,0 +1,15 @@
+namespace ControlInformes.Application.Features.Excel;
+
+public interface IExcelService
+{
+    List<ExcelInformeRow> LeerInformes(Stream stream);
+}
+
+public class ExcelInformeRow
+{
+    public string Nombre { get; set; } = string.Empty;
+    public string Tipo { get; set; } = string.Empty;
+    public bool Participo { get; set; }
+    public int? Horas { get; set; }
+    public int Cursos { get; set; }
+}

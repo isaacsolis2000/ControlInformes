@@ -1,0 +1,6 @@
+﻿using ControlInformes.Application.DTOs;
+using MediatR;
+
+namespace ControlInformes.Application.Features.Tarjeta.Queries;
+
+public record ObtenerTarjetaPublicadorQuery(Guid IdPublicador, int? AnoServicio = null) : IRequest<TarjetaPublicadorDto>;

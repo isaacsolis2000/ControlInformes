@@ -1,0 +1,26 @@
+﻿using ControlInformes.Application.Common;
+using ControlInformes.Application.DTOs;
+using ControlInformes.Application.Features.Reportes.Queries;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ControlInformes.API.Controllers;
+
+[ApiController]
+[Route("api/reportes")]
+public class ReportesController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public ReportesController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpGet("resumen-mensual")]
+    public async Task<ActionResult<ApiResponse<ResumenMensualDto>>> GetResumenMensual([FromQuery] int ano, [FromQuery] int mes)
+    {
+        var result = await _mediator.Send(new ObtenerResumenMensualQuery(ano, mes));
+        return Ok(ApiResponse<ResumenMensualDto>.Ok(result));
+    }
+}

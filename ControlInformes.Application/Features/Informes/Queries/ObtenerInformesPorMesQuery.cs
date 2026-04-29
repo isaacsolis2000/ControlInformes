@@ -1,0 +1,6 @@
+using ControlInformes.Application.DTOs;
+using MediatR;
+
+namespace ControlInformes.Application.Features.Informes.Queries;
+
+public record ObtenerInformesPorMesQuery(int Ano, int Mes) : IRequest<IReadOnlyList<InformeMensualDto>>;

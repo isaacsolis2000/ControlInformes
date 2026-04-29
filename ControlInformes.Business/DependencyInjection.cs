@@ -1,0 +1,22 @@
+using System.Reflection;
+using ControlInformes.Business.Implementations;
+using ControlInformes.Business.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace ControlInformes.Business;
+
+public static class DependencyInjection
+{
+    public static IServiceCollection AddBusiness(this IServiceCollection services)
+    {
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+        services.AddScoped<IBusPublicador, BusPublicador>();
+        services.AddScoped<IBusInformeMensual, BusInformeMensual>();
+        services.AddScoped<IBusAsistencia, BusAsistencia>();
+        services.AddScoped<IBusExcel, BusExcel>();
+        services.AddScoped<IBusReporte, BusReporte>();
+
+        return services;
+    }
+}

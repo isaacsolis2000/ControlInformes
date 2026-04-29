@@ -1,0 +1,11 @@
+using ControlInformes.Domain.Enums;
+
+namespace ControlInformes.Application.DTOs;
+
+public class AsistenciaDto
+{
+    public Guid IdAsistencia { get; set; }
+    public DateTime Fecha { get; set; }
+    public TipoReunion TipoReunion { get; set; }
+    public int Cantidad { get; set; }
+}

@@ -1,0 +1,20 @@
+﻿using ControlInformes.Domain.Entities;
+using ControlInformes.Domain.Interfaces;
+using ControlInformes.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
+
+namespace ControlInformes.Infrastructure.Repositories;
+
+public class InformeMensualRepository : GenericRepository<InformeMensual>, IInformeMensualRepository
+{
+    public InformeMensualRepository(AppDbContext context) : base(context) { }
+
+    public async Task<IReadOnlyList<InformeMensual>> GetByMesAsync(int año, int mes)
+        => await _dbSet.Include(i => i.Publicador).Where(i => i.Año == año && i.Mes == mes).ToListAsync();
+
+    public async Task<IReadOnlyList<InformeMensual>> GetByPublicadorAsync(Guid idPublicador)
+        => await _dbSet.Where(i => i.IdPublicador == idPublicador).OrderBy(i => i.Año).ThenBy(i => i.Mes).ToListAsync();
+
+    public async Task<InformeMensual?> GetByPublicadorMesAsync(Guid idPublicador, int año, int mes)
+        => await _dbSet.FirstOrDefaultAsync(i => i.IdPublicador == idPublicador && i.Año == año && i.Mes == mes);
+}

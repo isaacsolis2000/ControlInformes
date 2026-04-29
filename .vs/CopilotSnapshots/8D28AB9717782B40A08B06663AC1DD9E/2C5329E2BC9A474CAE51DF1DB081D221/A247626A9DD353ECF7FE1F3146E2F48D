@@ -1,0 +1,32 @@
+﻿using ControlInformes.Application.Common;
+using ControlInformes.Application.DTOs;
+using ControlInformes.Application.Features.Excel.Commands;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ControlInformes.API.Controllers;
+
+[ApiController]
+[Route("api/excel")]
+public class ExcelController : ControllerBase
+{
+    private readonly IMediator _mediator;
+
+    public ExcelController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
+
+    [HttpPost("importar")]
+    public async Task<ActionResult<ApiResponse<ImportacionResultadoDto>>> Importar(IFormFile archivo, [FromQuery] int año, [FromQuery] int mes)
+    {
+        if (archivo == null || archivo.Length == 0)
+            return BadRequest(ApiResponse<ImportacionResultadoDto>.Fail("Debe proporcionar un archivo Excel."));
+
+        using var stream = archivo.OpenReadStream();
+        var command = new ImportarInformesDesdeExcelCommand(stream, año, mes);
+        var result = await _mediator.Send(command);
+
+        return Ok(ApiResponse<ImportacionResultadoDto>.Ok(result, "Importación completada."));
+    }
+}

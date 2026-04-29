@@ -1,23 +1,249 @@
 [
   {
-    "ContainingType": "ControlInformes.API.Controllers.WeatherForecastController",
-    "Method": "Get",
-    "RelativePath": "WeatherForecast",
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "Registrar",
+    "RelativePath": "api/asistencia",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.RegistrarAsistenciaDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "GetByRango",
+    "RelativePath": "api/asistencia",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fechaInicio",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      },
+      {
+        "Name": "fechaFin",
+        "Type": "System.DateTime",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.ExcelController",
+    "Method": "ImportarInformes",
+    "RelativePath": "api/excel/importar-informes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "archivo",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      },
+      {
+        "Name": "ano",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "mes",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.ExcelController",
+    "Method": "DescargarTemplate",
+    "RelativePath": "api/excel/template",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": [
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "Registrar",
+    "RelativePath": "api/informes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[ControlInformes.API.WeatherForecast, ControlInformes.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.RegistrarInformeDto",
+        "IsRequired": true
       }
     ],
-    "EndpointName": "GetWeatherForecast"
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "GetByMes",
+    "RelativePath": "api/informes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ano",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "mes",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "GetHistorial",
+    "RelativePath": "api/informes/historial/{idPublicador}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idPublicador",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "GetAll",
+    "RelativePath": "api/publicadores",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "Create",
+    "RelativePath": "api/publicadores",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.CrearPublicadorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "GetById",
+    "RelativePath": "api/publicadores/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "Update",
+    "RelativePath": "api/publicadores/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.ActualizarPublicadorDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "Delete",
+    "RelativePath": "api/publicadores/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "GetTarjeta",
+    "RelativePath": "api/publicadores/{id}/tarjeta",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "anoServicio",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.ReportesController",
+    "Method": "GetResumenMensual",
+    "RelativePath": "api/reportes/resumen-mensual",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ano",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "mes",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

@@ -1,0 +1,64 @@
+﻿using ControlInformes.Application.Common.Exceptions;
+using ControlInformes.Application.DTOs;
+using ControlInformes.Domain.Entities;
+using ControlInformes.Domain.Interfaces;
+using MediatR;
+
+namespace ControlInformes.Application.Features.Tarjeta.Queries;
+
+public class ObtenerTarjetaPublicadorQueryHandler : IRequestHandler<ObtenerTarjetaPublicadorQuery, TarjetaPublicadorDto>
+{
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ObtenerTarjetaPublicadorQueryHandler(IUnitOfWork unitOfWork)
+    {
+        _unitOfWork = unitOfWork;
+    }
+
+    public async Task<TarjetaPublicadorDto> Handle(ObtenerTarjetaPublicadorQuery request, CancellationToken cancellationToken)
+    {
+        var publicador = await _unitOfWork.Publicadores.GetByIdAsync(request.IdPublicador)
+            ?? throw new NotFoundException(nameof(Publicador), request.IdPublicador);
+
+        var now = DateTime.Now;
+        int anoInicio = request.AnoServicio ?? (now.Month >= 9 ? now.Year : now.Year - 1);
+        int anoFin = anoInicio + 1;
+
+        var informes = await _unitOfWork.InformesMensuales.GetByPublicadorAsync(request.IdPublicador);
+
+        var meses = new List<TarjetaMesDto>();
+
+        for (int m = 9; m <= 12; m++)
+        {
+            var inf = informes.FirstOrDefault(i => i.Ano == anoInicio && i.Mes == m);
+            meses.Add(MapMes(anoInicio, m, inf));
+        }
+        for (int m = 1; m <= 8; m++)
+        {
+            var inf = informes.FirstOrDefault(i => i.Ano == anoFin && i.Mes == m);
+            meses.Add(MapMes(anoFin, m, inf));
+        }
+
+        return new TarjetaPublicadorDto
+        {
+            IdPublicador = publicador.IdPublicador,
+            NombreCompleto = publicador.NombreCompleto,
+            AnoServicioInicio = anoInicio,
+            AnoServicioFin = anoFin,
+            Meses = meses
+        };
+    }
+
+    private static TarjetaMesDto MapMes(int ano, int mes, InformeMensual? informe)
+    {
+        return new TarjetaMesDto
+        {
+            Ano = ano,
+            Mes = mes,
+            Participo = informe?.Participo ?? false,
+            CursosBiblicos = informe?.CursosBiblicos ?? 0,
+            Horas = informe?.Horas,
+            Notas = informe == null ? "Sin informe" : null
+        };
+    }
+}

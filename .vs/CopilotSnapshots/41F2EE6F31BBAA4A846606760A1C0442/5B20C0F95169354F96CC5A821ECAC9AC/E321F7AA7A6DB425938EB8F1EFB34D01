@@ -1,0 +1,110 @@
+﻿using ControlInformes.Business.DTOs;
+using ControlInformes.Business.Interfaces;
+using ControlInformes.Data.Interfaces;
+using ControlInformes.Domain.Entities;
+using ControlInformes.Domain.Enums;
+using ControlInformes.Utils;
+using Microsoft.Extensions.Logging;
+
+namespace ControlInformes.Business.Implementations;
+
+public class BusExcel : IBusExcel
+{
+    private readonly IExcelService _excelService;
+    private readonly IDatPublicador _datPublicador;
+    private readonly IDatInformeMensual _datInforme;
+    private readonly ILogger<BusExcel> _logger;
+
+    public BusExcel(IExcelService excelService, IDatPublicador datPublicador, IDatInformeMensual datInforme, ILogger<BusExcel> logger)
+    {
+        _excelService = excelService;
+        _datPublicador = datPublicador;
+        _datInforme = datInforme;
+        _logger = logger;
+    }
+
+    public async Task<ApiResponse<ImportacionResultadoDto>> ImportarAsync(Stream archivoStream, int ano, int mes)
+    {
+        var resultado = new ImportacionResultadoDto();
+        var filas = _excelService.LeerInformes(archivoStream);
+
+        foreach (var fila in filas)
+        {
+            resultado.TotalProcesados++;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(fila.Nombre))
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Nombre vacío.");
+                    continue;
+                }
+
+                if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipo))
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Tipo '{fila.Tipo}' no válido.");
+                    continue;
+                }
+
+                bool esPrecursor = tipo == TipoPublicador.PrecursorAuxiliar || tipo == TipoPublicador.PrecursorRegular;
+                if (!esPrecursor && fila.Horas.HasValue && fila.Horas > 0)
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Horas solo aplican a precursores.");
+                    continue;
+                }
+
+                var publicador = await _datPublicador.GetByNombreAsync(fila.Nombre);
+                if (publicador == null)
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Publicador '{fila.Nombre}' no encontrado.");
+                    continue;
+                }
+
+                var existente = await _datInforme.GetByPublicadorMesAsync(publicador.IdPublicador, ano, mes);
+
+                if (existente != null)
+                {
+                    existente.Participo = fila.Participo;
+                    existente.CursosBiblicos = fila.Cursos;
+                    existente.Horas = esPrecursor ? fila.Horas : null;
+                    existente.Tipo = tipo;
+                    _datInforme.Update(existente);
+                }
+                else
+                {
+                    var informe = new InformeMensual
+                    {
+                        IdInformeMensual = Guid.NewGuid(),
+                        IdPublicador = publicador.IdPublicador,
+                        Ano = ano,
+                        Mes = mes,
+                        Participo = fila.Participo,
+                        CursosBiblicos = fila.Cursos,
+                        Horas = esPrecursor ? fila.Horas : null,
+                        Tipo = tipo
+                    };
+                    await _datInforme.AddAsync(informe);
+                }
+
+                resultado.Exitosos++;
+            }
+            catch (Exception ex)
+            {
+                resultado.Fallidos++;
+                resultado.Errores.Add($"Fila {resultado.TotalProcesados}: {ex.Message}");
+            }
+        }
+
+        await _datInforme.SaveChangesAsync();
+        _logger.LogInformation("Importación completada: {Exitosos}/{Total}", resultado.Exitosos, resultado.TotalProcesados);
+        return ApiResponse<ImportacionResultadoDto>.Ok(resultado, "Importación completada.");
+    }
+
+    public byte[] GenerarTemplate()
+    {
+        return _excelService.GenerarTemplate();
+    }
+}

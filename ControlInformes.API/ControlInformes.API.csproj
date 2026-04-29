@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,7 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ControlInformes.Domain\ControlInformes.Domain.csproj" />
+    <ProjectReference Include="..\ControlInformes.Utils\ControlInformes.Utils.csproj" />
+    <ProjectReference Include="..\ControlInformes.Data\ControlInformes.Data.csproj" />
+    <ProjectReference Include="..\ControlInformes.Business\ControlInformes.Business.csproj" />
   </ItemGroup>
 
 </Project>

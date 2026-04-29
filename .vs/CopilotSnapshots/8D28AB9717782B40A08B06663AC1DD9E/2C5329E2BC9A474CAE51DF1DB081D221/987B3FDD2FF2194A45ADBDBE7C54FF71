@@ -1,0 +1,98 @@
+﻿using ControlInformes.Application.DTOs;
+using ControlInformes.Domain.Entities;
+using ControlInformes.Domain.Enums;
+using ControlInformes.Domain.Interfaces;
+using MediatR;
+
+namespace ControlInformes.Application.Features.Excel.Commands;
+
+public class ImportarInformesDesdeExcelCommandHandler : IRequestHandler<ImportarInformesDesdeExcelCommand, ImportacionResultadoDto>
+{
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IExcelService _excelService;
+
+    public ImportarInformesDesdeExcelCommandHandler(IUnitOfWork unitOfWork, IExcelService excelService)
+    {
+        _unitOfWork = unitOfWork;
+        _excelService = excelService;
+    }
+
+    public async Task<ImportacionResultadoDto> Handle(ImportarInformesDesdeExcelCommand request, CancellationToken cancellationToken)
+    {
+        var resultado = new ImportacionResultadoDto();
+        var filas = _excelService.LeerInformes(request.ArchivoStream);
+
+        foreach (var fila in filas)
+        {
+            resultado.TotalProcesados++;
+            try
+            {
+                if (string.IsNullOrWhiteSpace(fila.Nombre))
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Nombre vacío.");
+                    continue;
+                }
+
+                if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipo))
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Tipo '{fila.Tipo}' no válido.");
+                    continue;
+                }
+
+                bool esPrecursor = tipo == TipoPublicador.PrecursorAuxiliar || tipo == TipoPublicador.PrecursorRegular;
+                if (!esPrecursor && fila.Horas.HasValue && fila.Horas > 0)
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Horas solo aplican a precursores.");
+                    continue;
+                }
+
+                var publicador = await _unitOfWork.Publicadores.GetByNombreAsync(fila.Nombre);
+                if (publicador == null)
+                {
+                    resultado.Fallidos++;
+                    resultado.Errores.Add($"Fila {resultado.TotalProcesados}: Publicador '{fila.Nombre}' no encontrado.");
+                    continue;
+                }
+
+                var existente = await _unitOfWork.InformesMensuales.GetByPublicadorMesAsync(publicador.IdPublicador, request.Ano, request.Mes);
+
+                if (existente != null)
+                {
+                    existente.Participo = fila.Participo;
+                    existente.CursosBiblicos = fila.Cursos;
+                    existente.Horas = esPrecursor ? fila.Horas : null;
+                    existente.Tipo = tipo;
+                    _unitOfWork.InformesMensuales.Update(existente);
+                }
+                else
+                {
+                    var informe = new InformeMensual
+                    {
+                        IdInformeMensual = Guid.NewGuid(),
+                        IdPublicador = publicador.IdPublicador,
+                        Ano = request.Ano,
+                        Mes = request.Mes,
+                        Participo = fila.Participo,
+                        CursosBiblicos = fila.Cursos,
+                        Horas = esPrecursor ? fila.Horas : null,
+                        Tipo = tipo
+                    };
+                    await _unitOfWork.InformesMensuales.AddAsync(informe);
+                }
+
+                resultado.Exitosos++;
+            }
+            catch (Exception ex)
+            {
+                resultado.Fallidos++;
+                resultado.Errores.Add($"Fila {resultado.TotalProcesados}: {ex.Message}");
+            }
+        }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        return resultado;
+    }
+}
