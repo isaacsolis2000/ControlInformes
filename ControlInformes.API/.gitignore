@@ -1,0 +1,65 @@
+# Binarios y salida de compilación
+bin/
+obj/
+out/
+
+# Archivos de usuario de Visual Studio
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+
+# Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+packages/
+
+# Archivos de cobertura de pruebas
+coverage*/
+*.coveragexml
+TestResults/
+
+# Archivos de publicación
+publish/
+**/Properties/PublishProfiles/
+
+# Archivos temporales y del sistema
+*.tmp
+*.temp
+*.log
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Archivos de Rider
+.idea/
+*.sln.iml
+
+# Archivos de ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Archivos de StyleCop
+StyleCopReport.xml
+
+# Archivos de Entity Framework
+*.mdf
+*.ldf
+*.ndf
+migrations/
+
+# Archivos de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos de Docker (si los hay)
+docker-compose.override.yml
