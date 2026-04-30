@@ -24,6 +24,11 @@ public class BusReporte : IBusReporte
 
     public async Task<ApiResponse<ResumenMensualDto>> GetResumenMensualAsync(int ano, int mes)
     {
+        try
+        {
+        if (ano < 1 || mes < 1 || mes > 12)
+            return ApiResponse<ResumenMensualDto>.Fail("Año o mes inválido.", ErrorCatalog.ValidacionFallida, 400);
+
         var publicadoresActivos = await _datPublicador.GetActivosAsync();
         var informes = await _datInforme.GetByMesAsync(ano, mes);
 
@@ -70,5 +75,11 @@ public class BusReporte : IBusReporte
         };
 
         return ApiResponse<ResumenMensualDto>.Ok(resumen);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener resumen mensual: {Ano}/{Mes}.", ano, mes);
+            return ApiResponse<ResumenMensualDto>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 }

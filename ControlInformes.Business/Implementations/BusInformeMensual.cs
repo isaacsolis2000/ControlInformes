@@ -26,78 +26,102 @@ public class BusInformeMensual : IBusInformeMensual
 
     public async Task<ApiResponse<Guid>> RegistrarAsync(RegistrarInformeDto dto)
     {
-        // Validaciones
-        var errores = new List<string>();
-        if (dto.Ano < 2000 || dto.Ano > 2100)
-            errores.Add("El año debe estar entre 2000 y 2100.");
-        if (dto.Mes < 1 || dto.Mes > 12)
-            errores.Add("El mes debe estar entre 1 y 12.");
-        if (dto.CursosBiblicos < 0)
-            errores.Add("Los cursos bíblicos no pueden ser negativos.");
-        if (dto.Horas.HasValue && dto.Horas < 0)
-            errores.Add("Las horas no pueden ser negativas.");
-
-        if (errores.Count > 0)
-            return ApiResponse<Guid>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
-
-        if (!dto.Participo)
+        try
         {
-            dto.CursosBiblicos = 0;
-            dto.Horas = null;
-        }
+            // Validaciones
+            var errores = new List<string>();
+            if (dto.Ano < 2000 || dto.Ano > 2100)
+                errores.Add("El año debe estar entre 2000 y 2100.");
+            if (dto.Mes < 1 || dto.Mes > 12)
+                errores.Add("El mes debe estar entre 1 y 12.");
+            if (dto.CursosBiblicos < 0)
+                errores.Add("Los cursos bíblicos no pueden ser negativos.");
+            if (dto.Horas.HasValue && dto.Horas < 0)
+                errores.Add("Las horas no pueden ser negativas.");
 
-        var publicador = await _datPublicador.GetByIdAsync(dto.IdPublicador);
-        if (publicador == null)
-            return ApiResponse<Guid>.NotFound($"Publicador con Id ({dto.IdPublicador}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+            if (errores.Count > 0)
+                return ApiResponse<Guid>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
 
-        int? horas = (publicador.Tipo == TipoPublicador.PrecursorAuxiliar || publicador.Tipo == TipoPublicador.PrecursorRegular)
-            ? dto.Horas : null;
+            if (!dto.Participo)
+            {
+                dto.CursosBiblicos = 0;
+                dto.Horas = null;
+            }
 
-        var existente = await _datInforme.GetByPublicadorMesAsync(dto.IdPublicador, dto.Ano, dto.Mes);
+            var publicador = await _datPublicador.GetByIdAsync(dto.IdPublicador);
+            if (publicador == null)
+                return ApiResponse<Guid>.NotFound($"Publicador con Id ({dto.IdPublicador}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
 
-        if (existente != null)
-        {
-            existente.Participo = dto.Participo;
-            existente.CursosBiblicos = dto.CursosBiblicos;
-            existente.Horas = horas;
-            existente.Tipo = publicador.Tipo;
-            _datInforme.Update(existente);
+            int? horas = (publicador.Tipo == TipoPublicador.PrecursorAuxiliar || publicador.Tipo == TipoPublicador.PrecursorRegular)
+                ? dto.Horas : null;
+
+            var existente = await _datInforme.GetByPublicadorMesAsync(dto.IdPublicador, dto.Ano, dto.Mes);
+
+            if (existente != null)
+            {
+                existente.Participo = dto.Participo;
+                existente.CursosBiblicos = dto.CursosBiblicos;
+                existente.Horas = horas;
+                existente.Tipo = publicador.Tipo;
+                _datInforme.Update(existente);
+                await _datInforme.SaveChangesAsync();
+
+                _logger.LogInformation("Informe actualizado: {Id}", existente.IdInformeMensual);
+                return ApiResponse<Guid>.Ok(existente.IdInformeMensual, "Informe actualizado.");
+            }
+
+            var informe = new InformeMensual
+            {
+                IdInformeMensual = Guid.NewGuid(),
+                IdPublicador = dto.IdPublicador,
+                Ano = dto.Ano,
+                Mes = dto.Mes,
+                Participo = dto.Participo,
+                CursosBiblicos = dto.CursosBiblicos,
+                Horas = horas,
+                Tipo = publicador.Tipo
+            };
+
+            await _datInforme.AddAsync(informe);
             await _datInforme.SaveChangesAsync();
 
-            _logger.LogInformation("Informe actualizado: {Id}", existente.IdInformeMensual);
-            return ApiResponse<Guid>.Ok(existente.IdInformeMensual, "Informe actualizado.");
+            _logger.LogInformation("Informe registrado: {Id}", informe.IdInformeMensual);
+            return ApiResponse<Guid>.Ok(informe.IdInformeMensual, "Informe registrado.", 201);
         }
-
-        var informe = new InformeMensual
+        catch (Exception ex)
         {
-            IdInformeMensual = Guid.NewGuid(),
-            IdPublicador = dto.IdPublicador,
-            Ano = dto.Ano,
-            Mes = dto.Mes,
-            Participo = dto.Participo,
-            CursosBiblicos = dto.CursosBiblicos,
-            Horas = horas,
-            Tipo = publicador.Tipo
-        };
-
-        await _datInforme.AddAsync(informe);
-        await _datInforme.SaveChangesAsync();
-
-        _logger.LogInformation("Informe registrado: {Id}", informe.IdInformeMensual);
-        return ApiResponse<Guid>.Ok(informe.IdInformeMensual, "Informe registrado.", 201);
+            _logger.LogError(ex, "Error al obtener historial del publicador: {Id}.");
+            return ApiResponse<Guid>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<List<InformeMensualDto>>> GetByMesAsync(int ano, int mes)
     {
-        var informes = await _datInforme.GetByMesAsync(ano, mes);
-        var result = _mapper.Map<List<InformeMensualDto>>(informes);
-        return ApiResponse<List<InformeMensualDto>>.Ok(result);
+        try
+        {
+            var informes = await _datInforme.GetByMesAsync(ano, mes);
+            var result = _mapper.Map<List<InformeMensualDto>>(informes);
+            return ApiResponse<List<InformeMensualDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener informes por mes: {Ano}/{Mes}.", ano, mes);
+            return ApiResponse<List<InformeMensualDto>>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<List<InformeMensualDto>>> GetHistorialAsync(Guid idPublicador)
     {
-        var informes = await _datInforme.GetByPublicadorAsync(idPublicador);
-        var result = _mapper.Map<List<InformeMensualDto>>(informes);
-        return ApiResponse<List<InformeMensualDto>>.Ok(result);
+        try
+        {
+            var informes = await _datInforme.GetByPublicadorAsync(idPublicador);
+            var result = _mapper.Map<List<InformeMensualDto>>(informes);
+            return ApiResponse<List<InformeMensualDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener historial del publicador: {Id}.", idPublicador);
+            return ApiResponse<List<InformeMensualDto>>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 }

@@ -25,68 +25,110 @@ public class BusPublicador : IBusPublicador
 
     public async Task<ApiResponse<List<PublicadorDto>>> GetAllAsync()
     {
-        var publicadores = await _datPublicador.GetAllAsync();
-        var result = _mapper.Map<List<PublicadorDto>>(publicadores);
-        return ApiResponse<List<PublicadorDto>>.Ok(result);
+        try
+        {
+            var publicadores = await _datPublicador.GetAllAsync();
+            var result = _mapper.Map<List<PublicadorDto>>(publicadores);
+            return ApiResponse<List<PublicadorDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener publicadores.");
+            return ApiResponse<List<PublicadorDto>>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<PublicadorDto>> GetByIdAsync(Guid id)
     {
-        var publicador = await _datPublicador.GetByIdAsync(id);
-        if (publicador == null)
-            return ApiResponse<PublicadorDto>.NotFound($"Publicador con Id ({id}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+        try
+        {
+            var publicador = await _datPublicador.GetByIdAsync(id);
+            if (publicador == null)
+                return ApiResponse<PublicadorDto>.NotFound($"Publicador con Id ({id}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
 
-        var result = _mapper.Map<PublicadorDto>(publicador);
-        return ApiResponse<PublicadorDto>.Ok(result);
+            var result = _mapper.Map<PublicadorDto>(publicador);
+            return ApiResponse<PublicadorDto>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener publicador por Id: {Id}.", id);
+            return ApiResponse<PublicadorDto>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<Guid>> CrearAsync(CrearPublicadorDto dto)
     {
-        var publicador = _mapper.Map<Publicador>(dto);
-        publicador.IdPublicador = Guid.NewGuid();
-        publicador.Activo = true;
+        try
+        {
+            var publicador = _mapper.Map<Publicador>(dto);
+            publicador.IdPublicador = Guid.NewGuid();
+            publicador.Activo = true;
 
-        await _datPublicador.AddAsync(publicador);
-        await _datPublicador.SaveChangesAsync();
+            await _datPublicador.AddAsync(publicador);
+            await _datPublicador.SaveChangesAsync();
 
-        _logger.LogInformation("Publicador creado: {Id} - {Nombre}", publicador.IdPublicador, publicador.NombreCompleto);
-        return ApiResponse<Guid>.Ok(publicador.IdPublicador, "Publicador creado.", 201);
+            _logger.LogInformation("Publicador creado: {Id} - {Nombre}", publicador.IdPublicador, publicador.NombreCompleto);
+            return ApiResponse<Guid>.Ok(publicador.IdPublicador, "Publicador creado.", 201);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al crear publicador.");
+            return ApiResponse<Guid>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<string>> ActualizarAsync(ActualizarPublicadorDto dto)
     {
-        var publicador = await _datPublicador.GetByIdAsync(dto.IdPublicador);
-        if (publicador == null)
-            return ApiResponse<string>.NotFound($"Publicador con Id ({dto.IdPublicador}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+        try
+        {
+            var publicador = await _datPublicador.GetByIdAsync(dto.IdPublicador);
+            if (publicador == null)
+                return ApiResponse<string>.NotFound($"Publicador con Id ({dto.IdPublicador}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
 
-        publicador.NombreCompleto = dto.NombreCompleto;
-        publicador.FechaNacimiento = dto.FechaNacimiento;
-        publicador.FechaBautismo = dto.FechaBautismo;
-        publicador.Tipo = dto.Tipo;
-        publicador.Activo = dto.Activo;
+            publicador.NombreCompleto = dto.NombreCompleto;
+            publicador.FechaNacimiento = dto.FechaNacimiento;
+            publicador.FechaBautismo = dto.FechaBautismo;
+            publicador.Tipo = dto.Tipo;
+            publicador.Activo = dto.Activo;
 
-        _datPublicador.Update(publicador);
-        await _datPublicador.SaveChangesAsync();
+            _datPublicador.Update(publicador);
+            await _datPublicador.SaveChangesAsync();
 
-        _logger.LogInformation("Publicador actualizado: {Id}", dto.IdPublicador);
-        return ApiResponse<string>.Ok("Actualizado correctamente.");
+            _logger.LogInformation("Publicador actualizado: {Id}", dto.IdPublicador);
+            return ApiResponse<string>.Ok("Actualizado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar publicador: {Id}.", dto.IdPublicador);
+            return ApiResponse<string>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<string>> EliminarAsync(Guid id)
     {
-        var publicador = await _datPublicador.GetByIdAsync(id);
-        if (publicador == null)
-            return ApiResponse<string>.NotFound($"Publicador con Id ({id}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+        try
+        {
+            var publicador = await _datPublicador.GetByIdAsync(id);
+            if (publicador == null)
+                return ApiResponse<string>.NotFound($"Publicador con Id ({id}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
 
-        _datPublicador.Delete(publicador);
-        await _datPublicador.SaveChangesAsync();
+            _datPublicador.Delete(publicador);
+            await _datPublicador.SaveChangesAsync();
 
-        _logger.LogInformation("Publicador eliminado: {Id}", id);
-        return ApiResponse<string>.Ok("Eliminado correctamente.");
+            _logger.LogInformation("Publicador eliminado: {Id}", id);
+            return ApiResponse<string>.Ok("Eliminado correctamente.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar publicador: {Id}.", id);
+            return ApiResponse<string>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<TarjetaPublicadorDto>> GetTarjetaAsync(Guid idPublicador, int? anoServicio)
     {
+        try
+        {
         var publicador = await _datPublicador.GetByIdAsync(idPublicador);
         if (publicador == null)
             return ApiResponse<TarjetaPublicadorDto>.NotFound($"Publicador con Id ({idPublicador}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
@@ -119,6 +161,12 @@ public class BusPublicador : IBusPublicador
         };
 
         return ApiResponse<TarjetaPublicadorDto>.Ok(tarjeta);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener tarjeta del publicador: {Id}.", idPublicador);
+            return ApiResponse<TarjetaPublicadorDto>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     private static TarjetaMesDto MapMes(int ano, int mes, InformeMensual? informe)

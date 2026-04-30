@@ -11,6 +11,9 @@ public static class DependencyInjection
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+        services.AddSingleton<IPasswordService, PasswordService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IBusAuth, BusAuth>();
         services.AddScoped<IBusPublicador, BusPublicador>();
         services.AddScoped<IBusInformeMensual, BusInformeMensual>();
         services.AddScoped<IBusAsistencia, BusAsistencia>();

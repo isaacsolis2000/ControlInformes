@@ -147,6 +147,32 @@ namespace ControlInformes.Data.Migrations
                     b.ToTable("PublicadorGrupos");
                 });
 
+            modelBuilder.Entity("ControlInformes.Domain.Entities.Usuario", b =>
+                {
+                    b.Property<Guid>("IdUsuario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdUsuario");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
+                });
+
             modelBuilder.Entity("ControlInformes.Domain.Entities.InformeMensual", b =>
                 {
                     b.HasOne("ControlInformes.Domain.Entities.Publicador", "Publicador")

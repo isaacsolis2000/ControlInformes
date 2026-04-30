@@ -23,20 +23,36 @@ public class BusAsistencia : IBusAsistencia
 
     public async Task<ApiResponse<Guid>> RegistrarAsync(RegistrarAsistenciaDto dto)
     {
-        var asistencia = _mapper.Map<Asistencia>(dto);
-        asistencia.IdAsistencia = Guid.NewGuid();
+        try
+        {
+            var asistencia = _mapper.Map<Asistencia>(dto);
+            asistencia.IdAsistencia = Guid.NewGuid();
 
-        await _datAsistencia.AddAsync(asistencia);
-        await _datAsistencia.SaveChangesAsync();
+            await _datAsistencia.AddAsync(asistencia);
+            await _datAsistencia.SaveChangesAsync();
 
-        _logger.LogInformation("Asistencia registrada: {Id}", asistencia.IdAsistencia);
-        return ApiResponse<Guid>.Ok(asistencia.IdAsistencia, "Asistencia registrada.", 201);
+            _logger.LogInformation("Asistencia registrada: {Id}", asistencia.IdAsistencia);
+            return ApiResponse<Guid>.Ok(asistencia.IdAsistencia, "Asistencia registrada.", 201);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al registrar asistencia.");
+            return ApiResponse<Guid>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public async Task<ApiResponse<List<AsistenciaDto>>> GetByRangoAsync(DateTime fechaInicio, DateTime fechaFin)
     {
-        var asistencias = await _datAsistencia.GetByRangoAsync(fechaInicio, fechaFin);
-        var result = _mapper.Map<List<AsistenciaDto>>(asistencias);
-        return ApiResponse<List<AsistenciaDto>>.Ok(result);
+        try
+        {
+            var asistencias = await _datAsistencia.GetByRangoAsync(fechaInicio, fechaFin);
+            var result = _mapper.Map<List<AsistenciaDto>>(asistencias);
+            return ApiResponse<List<AsistenciaDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener asistencias por rango.");
+            return ApiResponse<List<AsistenciaDto>>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 }

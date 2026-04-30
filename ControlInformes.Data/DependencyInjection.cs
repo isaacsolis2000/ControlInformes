@@ -17,6 +17,7 @@ public static class DependencyInjection
         services.AddScoped<IDatPublicador, DatPublicador>();
         services.AddScoped<IDatInformeMensual, DatInformeMensual>();
         services.AddScoped<IDatAsistencia, DatAsistencia>();
+        services.AddScoped<IDatUsuario, DatUsuario>();
         services.AddScoped<IExcelService, ExcelService>();
 
         return services;

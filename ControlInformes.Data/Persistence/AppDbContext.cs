@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<PublicadorGrupo> PublicadorGrupos => Set<PublicadorGrupo>();
     public DbSet<InformeMensual> InformesMensuales => Set<InformeMensual>();
     public DbSet<Asistencia> Asistencias => Set<Asistencia>();
+    public DbSet<Usuario> Usuarios => Set<Usuario>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +51,14 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdAsistencia);
             entity.Property(e => e.TipoReunion).HasConversion<int>();
+        });
+
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.HasKey(e => e.IdUsuario);
+            entity.Property(e => e.Username).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PasswordHash).IsRequired();
+            entity.HasIndex(e => e.Username).IsUnique();
         });
     }
 }

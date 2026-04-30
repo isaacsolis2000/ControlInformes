@@ -37,6 +37,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "ControlInformes.API.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.LoginRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "ControlInformes.API.Controllers.ExcelController",
     "Method": "ImportarInformes",
     "RelativePath": "api/excel/importar-informes",

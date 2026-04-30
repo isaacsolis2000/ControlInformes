@@ -25,6 +25,8 @@ public class BusExcel : IBusExcel
 
     public async Task<ApiResponse<ImportacionResultadoDto>> ImportarAsync(Stream archivoStream, int ano, int mes)
     {
+        try
+        {
         var resultado = new ImportacionResultadoDto();
         var filas = _excelService.LeerInformes(archivoStream);
 
@@ -104,10 +106,24 @@ public class BusExcel : IBusExcel
         await _datInforme.SaveChangesAsync();
         _logger.LogInformation("Importación completada: {Exitosos}/{Total}", resultado.Exitosos, resultado.TotalProcesados);
         return ApiResponse<ImportacionResultadoDto>.Ok(resultado, "Importación completada.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error inesperado durante la importación Excel.");
+            return ApiResponse<ImportacionResultadoDto>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 
     public byte[] GenerarTemplate()
     {
-        return _excelService.GenerarTemplate();
+        try
+        {
+            return _excelService.GenerarTemplate();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al generar el template Excel.");
+            throw;
+        }
     }
 }
