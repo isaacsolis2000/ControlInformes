@@ -9,7 +9,8 @@ public class PublicadorDto
     public DateTime FechaNacimiento { get; set; }
     public DateTime? FechaBautismo { get; set; }
     public TipoPublicador Tipo { get; set; }
-    public bool Activo { get; set; }
+    public bool Inactivo { get; set; }
+    public DateTime FechaCreacion { get; set; }
 }
 
 public class CrearPublicadorDto
@@ -18,14 +19,16 @@ public class CrearPublicadorDto
     public DateTime FechaNacimiento { get; set; }
     public DateTime? FechaBautismo { get; set; }
     public TipoPublicador Tipo { get; set; }
+    public Guid? IdGrupo { get; set; }
+    public bool Inactivo { get; set; }
 }
 
 public class ActualizarPublicadorDto
 {
     public Guid IdPublicador { get; set; }
     public string NombreCompleto { get; set; } = string.Empty;
-    public DateTime FechaNacimiento { get; set; }
+    public DateTime? FechaNacimiento { get; set; }
     public DateTime? FechaBautismo { get; set; }
     public TipoPublicador Tipo { get; set; }
-    public bool Activo { get; set; }
+    public Guid? IdGrupo { get; set; }
 }

@@ -48,10 +48,8 @@ namespace ControlInformes.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Capitan")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<Guid>("IdCapitan")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -59,6 +57,8 @@ namespace ControlInformes.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("IdGrupo");
+
+                    b.HasIndex("IdCapitan");
 
                     b.ToTable("Grupos");
                 });
@@ -110,8 +110,17 @@ namespace ControlInformes.Data.Migrations
                     b.Property<DateTime?>("FechaBautismo")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("FechaNacimiento")
+                    b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaNacimiento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("IdGrupo")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Inactivo")
+                        .HasColumnType("bit");
 
                     b.Property<string>("NombreCompleto")
                         .IsRequired()
@@ -123,28 +132,9 @@ namespace ControlInformes.Data.Migrations
 
                     b.HasKey("IdPublicador");
 
-                    b.ToTable("Publicadores");
-                });
-
-            modelBuilder.Entity("ControlInformes.Domain.Entities.PublicadorGrupo", b =>
-                {
-                    b.Property<Guid>("IdPublicadorGrupo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("IdGrupo")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("IdPublicador")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("IdPublicadorGrupo");
-
                     b.HasIndex("IdGrupo");
 
-                    b.HasIndex("IdPublicador");
-
-                    b.ToTable("PublicadorGrupos");
+                    b.ToTable("Publicadores");
                 });
 
             modelBuilder.Entity("ControlInformes.Domain.Entities.Usuario", b =>
@@ -173,6 +163,17 @@ namespace ControlInformes.Data.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("ControlInformes.Domain.Entities.Grupo", b =>
+                {
+                    b.HasOne("ControlInformes.Domain.Entities.Publicador", "Capitan")
+                        .WithMany()
+                        .HasForeignKey("IdCapitan")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Capitan");
+                });
+
             modelBuilder.Entity("ControlInformes.Domain.Entities.InformeMensual", b =>
                 {
                     b.HasOne("ControlInformes.Domain.Entities.Publicador", "Publicador")
@@ -184,35 +185,24 @@ namespace ControlInformes.Data.Migrations
                     b.Navigation("Publicador");
                 });
 
-            modelBuilder.Entity("ControlInformes.Domain.Entities.PublicadorGrupo", b =>
+            modelBuilder.Entity("ControlInformes.Domain.Entities.Publicador", b =>
                 {
                     b.HasOne("ControlInformes.Domain.Entities.Grupo", "Grupo")
-                        .WithMany("PublicadorGrupos")
+                        .WithMany("Publicadores")
                         .HasForeignKey("IdGrupo")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ControlInformes.Domain.Entities.Publicador", "Publicador")
-                        .WithMany("PublicadorGrupos")
-                        .HasForeignKey("IdPublicador")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Grupo");
-
-                    b.Navigation("Publicador");
                 });
 
             modelBuilder.Entity("ControlInformes.Domain.Entities.Grupo", b =>
                 {
-                    b.Navigation("PublicadorGrupos");
+                    b.Navigation("Publicadores");
                 });
 
             modelBuilder.Entity("ControlInformes.Domain.Entities.Publicador", b =>
                 {
                     b.Navigation("InformesMensuales");
-
-                    b.Navigation("PublicadorGrupos");
                 });
 #pragma warning restore 612, 618
         }

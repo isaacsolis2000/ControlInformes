@@ -59,4 +59,19 @@ public class PublicadoresController : ControllerBase
         var response = await _busPublicador.GetTarjetaAsync(id, anoServicio);
         return StatusCode(response.HttpCode, response);
     }
+
+    [HttpGet("sin-grupo")]
+    public async Task<IActionResult> GetSinGrupo()
+    {
+        var response = await _busPublicador.GetSinGrupoAsync();
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpGet("listado")]
+    public async Task<IActionResult> GetListado([FromQuery] FiltroPublicadorGrupoDto filtro)
+    {
+        var response = await _busPublicador.GetListadoPaginadoAsync(filtro);
+        return StatusCode(response.HttpCode, response);
+    }
+
 }

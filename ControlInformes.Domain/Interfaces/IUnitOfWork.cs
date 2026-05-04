@@ -6,6 +6,5 @@ public interface IUnitOfWork : IDisposable
     IInformeMensualRepository InformesMensuales { get; }
     IAsistenciaRepository Asistencias { get; }
     IGenericRepository<Domain.Entities.Grupo> Grupos { get; }
-    IGenericRepository<Domain.Entities.PublicadorGrupo> PublicadorGrupos { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

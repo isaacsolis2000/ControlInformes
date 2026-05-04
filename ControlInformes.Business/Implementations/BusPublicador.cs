@@ -63,7 +63,7 @@ public class BusPublicador : IBusPublicador
             var publicador = _mapper.Map<Publicador>(dto);
             publicador.IdPublicador = Guid.NewGuid();
             publicador.Activo = true;
-
+            publicador.FechaCreacion = DateTime.Now;
             await _datPublicador.AddAsync(publicador);
             await _datPublicador.SaveChangesAsync();
 
@@ -89,8 +89,9 @@ public class BusPublicador : IBusPublicador
             publicador.FechaNacimiento = dto.FechaNacimiento;
             publicador.FechaBautismo = dto.FechaBautismo;
             publicador.Tipo = dto.Tipo;
-            publicador.Activo = dto.Activo;
-
+            publicador.IdGrupo = dto.IdGrupo;
+            publicador.Activo = true;
+            publicador.FechaCreacion = DateTime.Now;
             _datPublicador.Update(publicador);
             await _datPublicador.SaveChangesAsync();
 
@@ -180,5 +181,60 @@ public class BusPublicador : IBusPublicador
             Horas = informe?.Horas,
             Notas = informe == null ? "Sin informe" : null
         };
+    }
+
+    public async Task<ApiResponse<List<PublicadorDto>>> GetSinGrupoAsync()
+    {
+        try
+        {
+            var publicadores = await _datPublicador.GetSinGrupoAsync();
+            var result = _mapper.Map<List<PublicadorDto>>(publicadores);
+            return ApiResponse<List<PublicadorDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener publicadores sin grupo.");
+            return ApiResponse<List<PublicadorDto>>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
+    public async Task<ApiResponse<PagedResult<PublicadorGrupoDto>>> GetListadoPaginadoAsync(FiltroPublicadorGrupoDto filtro)
+    {
+        try
+        {
+            var (items, total) = await _datPublicador.GetPaginadoConGrupoAsync(
+                filtro.IdGrupo,
+                filtro.IdPublicador,
+                filtro.Tipo,
+                filtro.Pagina,
+                filtro.TamanoPagina);
+
+            var dtos = items.Select(p => new PublicadorGrupoDto
+            {
+                IdPublicador = p.IdPublicador,
+                NombrePublicador = p.NombreCompleto,
+                Tipo = (int)p.Tipo,
+                TipoDescripcion = p.Tipo.ToString(),
+                IdGrupo = p.IdGrupo,
+                NombreGrupo = p.Grupo?.Nombre ?? string.Empty,
+                EsCapitan = p.Grupo?.IdCapitan == p.IdPublicador
+            }).ToList();
+
+            var result = new PagedResult<PublicadorGrupoDto>
+            {
+                Items = dtos,
+                TotalRegistros = total,
+                Pagina = filtro.Pagina,
+                TamanoPagina = filtro.TamanoPagina
+            };
+
+            return ApiResponse<PagedResult<PublicadorGrupoDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener listado paginado de publicadores por grupo.");
+            return ApiResponse<PagedResult<PublicadorGrupoDto>>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
     }
 }

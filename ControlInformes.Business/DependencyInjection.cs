@@ -19,6 +19,8 @@ public static class DependencyInjection
         services.AddScoped<IBusAsistencia, BusAsistencia>();
         services.AddScoped<IBusExcel, BusExcel>();
         services.AddScoped<IBusReporte, BusReporte>();
+        services.AddScoped<IBusDashboard, BusDashboard>();
+        services.AddScoped<IBusGrupo, BusGrupo>();
 
         return services;
     }

@@ -11,4 +11,6 @@ public interface IBusPublicador
     Task<ApiResponse<string>> ActualizarAsync(ActualizarPublicadorDto dto);
     Task<ApiResponse<string>> EliminarAsync(Guid id);
     Task<ApiResponse<TarjetaPublicadorDto>> GetTarjetaAsync(Guid idPublicador, int? anoServicio);
+    Task<ApiResponse<List<PublicadorDto>>> GetSinGrupoAsync();
+    Task<ApiResponse<PagedResult<PublicadorGrupoDto>>> GetListadoPaginadoAsync(FiltroPublicadorGrupoDto filtro);
 }

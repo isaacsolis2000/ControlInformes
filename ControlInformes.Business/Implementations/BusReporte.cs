@@ -34,7 +34,7 @@ public class BusReporte : IBusReporte
 
         var primerDiaMes = new DateTime(ano, mes, 1);
         var ultimoDiaMes = primerDiaMes.AddMonths(1).AddDays(-1);
-        var asistencias = await _datAsistencia.GetByRangoAsync(primerDiaMes, ultimoDiaMes);
+        //var asistencias = await _datAsistencia.GetByRangoAsync(primerDiaMes, ultimoDiaMes);
 
         var resumen = new ResumenMensualDto
         {
@@ -44,7 +44,7 @@ public class BusReporte : IBusReporte
             CantidadInformes = informes.Count,
             TotalCursosBiblicos = informes.Sum(i => i.CursosBiblicos),
             TotalHorasPrecursores = informes.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value),
-            PromedioAsistencia = asistencias.Count > 0 ? asistencias.Average(a => a.Cantidad) : 0
+            //PromedioAsistencia = asistencias.Count > 0 ? asistencias.Average(a => a.Cantidad) : 0
         };
 
         var infPublicadores = informes.Where(i => i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();

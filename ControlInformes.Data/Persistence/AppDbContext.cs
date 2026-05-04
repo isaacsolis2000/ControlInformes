@@ -1,4 +1,4 @@
-using ControlInformes.Domain.Entities;
+﻿using ControlInformes.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ControlInformes.Data.Persistence;
@@ -9,7 +9,6 @@ public class AppDbContext : DbContext
 
     public DbSet<Publicador> Publicadores => Set<Publicador>();
     public DbSet<Grupo> Grupos => Set<Grupo>();
-    public DbSet<PublicadorGrupo> PublicadorGrupos => Set<PublicadorGrupo>();
     public DbSet<InformeMensual> InformesMensuales => Set<InformeMensual>();
     public DbSet<Asistencia> Asistencias => Set<Asistencia>();
     public DbSet<Usuario> Usuarios => Set<Usuario>();
@@ -23,21 +22,28 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.IdPublicador);
             entity.Property(e => e.NombreCompleto).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Tipo).HasConversion<int>();
+            entity.Property(e => e.Inactivo).IsRequired();
+            entity.Property(e => e.Activo).IsRequired();
+            entity.Property(e => e.FechaCreacion).IsRequired();
+
+            entity.HasOne(e => e.Grupo)              
+                  .WithMany(g => g.Publicadores)     
+                  .HasForeignKey(e => e.IdGrupo)     
+                  .IsRequired(false)                 
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<Grupo>(entity =>
         {
             entity.HasKey(e => e.IdGrupo);
             entity.Property(e => e.Nombre).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.Capitan).IsRequired().HasMaxLength(200);
+
+            entity.HasOne(e => e.Capitan)
+                  .WithMany()                        
+                  .HasForeignKey(e => e.IdCapitan)
+                  .OnDelete(DeleteBehavior.Restrict); 
         });
 
-        modelBuilder.Entity<PublicadorGrupo>(entity =>
-        {
-            entity.HasKey(e => e.IdPublicadorGrupo);
-            entity.HasOne(e => e.Publicador).WithMany(p => p.PublicadorGrupos).HasForeignKey(e => e.IdPublicador);
-            entity.HasOne(e => e.Grupo).WithMany(g => g.PublicadorGrupos).HasForeignKey(e => e.IdGrupo);
-        });
 
         modelBuilder.Entity<InformeMensual>(entity =>
         {
@@ -50,7 +56,14 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Asistencia>(entity =>
         {
             entity.HasKey(e => e.IdAsistencia);
-            entity.Property(e => e.TipoReunion).HasConversion<int>();
+            entity.Property(e => e.FechaReunion).IsRequired();
+            entity.Property(e => e.TipoReunion).HasConversion<int?>().IsRequired(false); // Nullable
+            entity.Property(e => e.CantidadPresencial).IsRequired().HasDefaultValue(0);
+            entity.Property(e => e.CantidadVirtual).IsRequired().HasDefaultValue(0);
+            entity.Property(e => e.Observacion).HasMaxLength(500).IsRequired(false);
+
+            // Evitar duplicados: misma fecha y tipo
+            entity.HasIndex(e => new { e.FechaReunion, e.TipoReunion }).IsUnique();
         });
 
         modelBuilder.Entity<Usuario>(entity =>

@@ -15,6 +15,20 @@ public class AsistenciaController : ControllerBase
         _busAsistencia = busAsistencia;
     }
 
+    [HttpGet]
+    public async Task<IActionResult> GetPaginado([FromQuery] FiltroAsistenciaDto filtro)
+    {
+        var response = await _busAsistencia.GetPaginadoAsync(filtro);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var response = await _busAsistencia.GetByIdAsync(id);
+        return StatusCode(response.HttpCode, response);
+    }
+
     [HttpPost]
     public async Task<IActionResult> Registrar([FromBody] RegistrarAsistenciaDto dto)
     {
@@ -22,10 +36,28 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetByRango([FromQuery] DateTime fechaInicio, [FromQuery] DateTime fechaFin)
+    // Registrar solo fecha sin reunión (bitácora)
+    [HttpPost("fecha")]
+    public async Task<IActionResult> RegistrarFecha([FromBody] RegistrarFechaDto dto)
     {
-        var response = await _busAsistencia.GetByRangoAsync(fechaInicio, fechaFin);
+        var response = await _busAsistencia.RegistrarFechaAsync(dto);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Actualizar(Guid id, [FromBody] ActualizarAsistenciaDto dto)
+    {
+        if (id != dto.IdAsistencia)
+            return BadRequest(new { HasError = true, Mensaje = "El ID no coincide." });
+
+        var response = await _busAsistencia.ActualizarAsync(dto);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Eliminar(Guid id)
+    {
+        var response = await _busAsistencia.EliminarAsync(id);
         return StatusCode(response.HttpCode, response);
     }
 }

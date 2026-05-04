@@ -12,4 +12,12 @@ public interface IDatPublicador
     void Update(Publicador publicador);
     void Delete(Publicador publicador);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task<List<Publicador>> GetByGrupoAsync(Guid idGrupo);
+    Task<List<Publicador>> GetSinGrupoAsync();
+    Task<(List<Publicador> Items, int Total)> GetPaginadoConGrupoAsync(
+    Guid? idGrupo,
+    Guid? idPublicador,
+    int? tipo,
+    int pagina,
+    int tamanoPagina);
 }
