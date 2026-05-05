@@ -16,9 +16,11 @@ namespace ControlInformes.Data.Migrations
                 columns: table => new
                 {
                     IdAsistencia = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TipoReunion = table.Column<int>(type: "int", nullable: false),
-                    Cantidad = table.Column<int>(type: "int", nullable: false)
+                    FechaReunion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TipoReunion = table.Column<int>(type: "int", nullable: true),
+                    CantidadPresencial = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    CantidadVirtual = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
+                    Observacion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,7 +90,9 @@ namespace ControlInformes.Data.Migrations
                     Participo = table.Column<bool>(type: "bit", nullable: false),
                     CursosBiblicos = table.Column<int>(type: "int", nullable: false),
                     Horas = table.Column<int>(type: "int", nullable: true),
-                    Tipo = table.Column<int>(type: "int", nullable: false)
+                    Tipo = table.Column<int>(type: "int", nullable: false),
+                    Inactivo = table.Column<bool>(type: "bit", nullable: false),
+                    Observacion = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -100,6 +104,13 @@ namespace ControlInformes.Data.Migrations
                         principalColumn: "IdPublicador",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Asistencias_FechaReunion_TipoReunion",
+                table: "Asistencias",
+                columns: new[] { "FechaReunion", "TipoReunion" },
+                unique: true,
+                filter: "[TipoReunion] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Grupos_IdCapitan",

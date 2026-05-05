@@ -1,9 +1,9 @@
-namespace ControlInformes.Data.Interfaces;
+﻿namespace ControlInformes.Data.Interfaces;
 
 public interface IExcelService
 {
     List<ExcelInformeRow> LeerInformes(Stream stream);
-    byte[] GenerarTemplate();
+    byte[] GenerarTemplate(List<string> nombresPublicadores); // ← recibe nombres
 }
 
 public class ExcelInformeRow
@@ -13,4 +13,6 @@ public class ExcelInformeRow
     public bool Participo { get; set; }
     public int? Horas { get; set; }
     public int Cursos { get; set; }
+    public bool Inactivo { get; set; }          // ← nuevo
+    public string? Observacion { get; set; }    // ← nuevo
 }

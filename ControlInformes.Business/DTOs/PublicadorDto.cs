@@ -31,4 +31,5 @@ public class ActualizarPublicadorDto
     public DateTime? FechaBautismo { get; set; }
     public TipoPublicador Tipo { get; set; }
     public Guid? IdGrupo { get; set; }
+    public bool Inactivo { get; set; }
 }

@@ -1,4 +1,4 @@
-using ControlInformes.Data.Interfaces;
+﻿using ControlInformes.Data.Interfaces;
 using ControlInformes.Data.Persistence;
 using ControlInformes.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -47,7 +47,9 @@ public class DatPublicador : IDatPublicador
     public async Task<(List<Publicador> Items, int Total)> GetPaginadoConGrupoAsync(
     Guid? idGrupo,
     Guid? idPublicador,
+    string? nombreCompleto,
     int? tipo,
+    bool? inactivo,
     int pagina,
     int tamanoPagina)
     {
@@ -62,8 +64,14 @@ public class DatPublicador : IDatPublicador
         if (idGrupo.HasValue)
             query = query.Where(p => p.IdGrupo == idGrupo.Value);
 
+        if (!string.IsNullOrWhiteSpace(nombreCompleto))
+            query = query.Where(p => p.NombreCompleto.Contains(nombreCompleto)); // ← nuevo
+
         if (tipo.HasValue)
             query = query.Where(p => (int)p.Tipo == tipo.Value);
+
+        if (inactivo.HasValue)
+            query = query.Where(p => p.Inactivo == inactivo.Value);              // ← nuevo
 
         query = query
             .OrderBy(p => p.IdGrupo == null ? 1 : 0)
@@ -71,7 +79,6 @@ public class DatPublicador : IDatPublicador
             .ThenBy(p => p.NombreCompleto);
 
         var total = await query.CountAsync();
-
         var items = await query
             .Skip((pagina - 1) * tamanoPagina)
             .Take(tamanoPagina)

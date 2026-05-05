@@ -13,4 +13,5 @@ public interface IDatGrupo
     void Update(Grupo grupo);
     void Delete(Grupo grupo);
     Task SaveChangesAsync(CancellationToken cancellationToken);
+    Task<Grupo?> GetByCapitanAsync(Guid idCapitan);
 }

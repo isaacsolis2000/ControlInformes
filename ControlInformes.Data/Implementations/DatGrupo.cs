@@ -16,7 +16,11 @@ public class DatGrupo : IDatGrupo
 
     // Solo grupos sin navegación
     public async Task<List<Grupo>> GetAllAsync()
-        => await _context.Grupos.ToListAsync();
+    => await _context.Grupos
+        .Include(g => g.Capitan)
+        .Include(g => g.Publicadores)
+        .OrderBy(g => g.Nombre)
+        .ToListAsync();
 
     public async Task<Grupo?> GetByIdAsync(Guid id)
         => await _context.Grupos.FindAsync(id);
@@ -49,4 +53,8 @@ public class DatGrupo : IDatGrupo
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
         => await _context.SaveChangesAsync(cancellationToken);
+
+    public async Task<Grupo?> GetByCapitanAsync(Guid idCapitan)
+    => await _context.Grupos
+        .FirstOrDefaultAsync(g => g.IdCapitan == idCapitan);
 }

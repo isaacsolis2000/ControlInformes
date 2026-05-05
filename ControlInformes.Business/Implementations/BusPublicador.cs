@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
 using ControlInformes.Data.Interfaces;
@@ -205,7 +205,9 @@ public class BusPublicador : IBusPublicador
             var (items, total) = await _datPublicador.GetPaginadoConGrupoAsync(
                 filtro.IdGrupo,
                 filtro.IdPublicador,
+                filtro.NombreCompleto,  // ← nuevo
                 filtro.Tipo,
+                filtro.Inactivo,        // ← nuevo
                 filtro.Pagina,
                 filtro.TamanoPagina);
 
@@ -217,7 +219,8 @@ public class BusPublicador : IBusPublicador
                 TipoDescripcion = p.Tipo.ToString(),
                 IdGrupo = p.IdGrupo,
                 NombreGrupo = p.Grupo?.Nombre ?? string.Empty,
-                EsCapitan = p.Grupo?.IdCapitan == p.IdPublicador
+                EsCapitan = p.Grupo?.IdCapitan == p.IdPublicador,
+                Inactivo = p.Inactivo          // ← nuevo
             }).ToList();
 
             var result = new PagedResult<PublicadorGrupoDto>

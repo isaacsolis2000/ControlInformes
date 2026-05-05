@@ -1,4 +1,4 @@
-using ControlInformes.Business.DTOs;
+﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +22,16 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    [HttpGet("{id}")]
+    // ✅ Rutas fijas ANTES de {id:guid}
+    [HttpPost("fecha")]
+    public async Task<IActionResult> RegistrarFecha([FromBody] RegistrarFechaDto dto)
+    {
+        var response = await _busAsistencia.RegistrarFechaAsync(dto);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    // ✅ Rutas con parámetro DESPUÉS
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var response = await _busAsistencia.GetByIdAsync(id);
@@ -36,15 +45,7 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    // Registrar solo fecha sin reuni�n (bit�cora)
-    [HttpPost("fecha")]
-    public async Task<IActionResult> RegistrarFecha([FromBody] RegistrarFechaDto dto)
-    {
-        var response = await _busAsistencia.RegistrarFechaAsync(dto);
-        return StatusCode(response.HttpCode, response);
-    }
-
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> Actualizar(Guid id, [FromBody] ActualizarAsistenciaDto dto)
     {
         if (id != dto.IdAsistencia)
@@ -54,7 +55,7 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Eliminar(Guid id)
     {
         var response = await _busAsistencia.EliminarAsync(id);

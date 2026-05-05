@@ -15,5 +15,6 @@ namespace ControlInformes.Business.DTOs
         public Guid? IdGrupo { get; set; }
         public string NombreGrupo { get; set; } = string.Empty;
         public bool EsCapitan { get; set; }
+        public bool Inactivo { get; set; }  // ← nuevo
     }
 }

@@ -6,6 +6,57 @@
   },
   "paths": {
     "/api/asistencia": {
+      "get": {
+        "tags": [
+          "Asistencia"
+        ],
+        "parameters": [
+          {
+            "name": "Ano",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Mes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TipoReunion",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TipoReunion"
+            }
+          },
+          {
+            "name": "Pagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TamanoPagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Asistencia"
@@ -34,26 +85,113 @@
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/api/asistencia/fecha": {
+      "post": {
+        "tags": [
+          "Asistencia"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarFechaDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarFechaDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrarFechaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/asistencia/{id}": {
       "get": {
         "tags": [
           "Asistencia"
         ],
         "parameters": [
           {
-            "name": "fechaInicio",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
-              "format": "date-time"
+              "format": "uuid"
             }
-          },
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Asistencia"
+        ],
+        "parameters": [
           {
-            "name": "fechaFin",
-            "in": "query",
+            "name": "id",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string",
-              "format": "date-time"
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarAsistenciaDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarAsistenciaDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarAsistenciaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Asistencia"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -146,6 +284,14 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "idGrupo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         ],
         "requestBody": {
@@ -175,7 +321,42 @@
         }
       }
     },
-    "/api/excel/template": {
+    "/api/excel/template/{idGrupo}": {
+      "get": {
+        "tags": [
+          "Excel"
+        ],
+        "parameters": [
+          {
+            "name": "idGrupo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/excel/listado-publicadores": {
+      "get": {
+        "tags": [
+          "Excel"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/excel/listado-grupos": {
       "get": {
         "tags": [
           "Excel"
@@ -226,44 +407,10 @@
             "description": "OK"
           }
         }
-      }
-    },
-    "/api/grupos/{id}": {
-      "get": {
-        "tags": [
-          "Grupos"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       },
       "put": {
         "tags": [
           "Grupos"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
         ],
         "requestBody": {
           "content": {
@@ -284,6 +431,29 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/grupos/{id}": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -343,7 +513,135 @@
         }
       }
     },
+    "/api/grupos/{id}/miembros": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/grupos/quitar-publicadores": {
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuitarPublicadoresDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuitarPublicadoresDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuitarPublicadoresDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/informes": {
+      "get": {
+        "tags": [
+          "Informes"
+        ],
+        "parameters": [
+          {
+            "name": "Ano",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Mes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "IdGrupo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "IdPublicador",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Tipo",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TipoPublicador"
+            }
+          },
+          {
+            "name": "Inactivo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Pagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TamanoPagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
       "post": {
         "tags": [
           "Informes"
@@ -372,7 +670,9 @@
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/api/informes/total": {
       "get": {
         "tags": [
           "Informes"
@@ -402,14 +702,135 @@
         }
       }
     },
-    "/api/informes/historial/{idPublicador}": {
+    "/api/informes/template/{idGrupo}": {
       "get": {
         "tags": [
           "Informes"
         ],
         "parameters": [
           {
-            "name": "idPublicador",
+            "name": "idGrupo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/informes/importar": {
+      "post": {
+        "tags": [
+          "Informes"
+        ],
+        "parameters": [
+          {
+            "name": "ano",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "mes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "idGrupo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "archivo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "archivo": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/informes/{id}": {
+      "put": {
+        "tags": [
+          "Informes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarInformeDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarInformeDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarInformeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Informes"
+        ],
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -459,6 +880,86 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/publicadores/sin-grupo": {
+      "get": {
+        "tags": [
+          "Publicadores"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/publicadores/listado": {
+      "get": {
+        "tags": [
+          "Publicadores"
+        ],
+        "parameters": [
+          {
+            "name": "IdGrupo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "IdPublicador",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "NombreCompleto",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Tipo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Inactivo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "Pagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "TamanoPagina",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -581,72 +1082,6 @@
         }
       }
     },
-    "/api/publicadores/sin-grupo": {
-      "get": {
-        "tags": [
-          "Publicadores"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/publicadores/listado": {
-      "get": {
-        "tags": [
-          "Publicadores"
-        ],
-        "parameters": [
-          {
-            "name": "IdGrupo",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "IdPublicador",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "Tipo",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Pagina",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "TamanoPagina",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/api/reportes/resumen-mensual": {
       "get": {
         "tags": [
@@ -680,6 +1115,35 @@
   },
   "components": {
     "schemas": {
+      "ActualizarAsistenciaDto": {
+        "type": "object",
+        "properties": {
+          "idAsistencia": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fechaReunion": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "tipoReunion": {
+            "$ref": "#/components/schemas/TipoReunion"
+          },
+          "cantidadPresencial": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cantidadVirtual": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "observacion": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ActualizarGrupoDto": {
         "type": "object",
         "properties": {
@@ -694,6 +1158,38 @@
           "idCapitan": {
             "type": "string",
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ActualizarInformeDto": {
+        "type": "object",
+        "properties": {
+          "idInformeMensual": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "participo": {
+            "type": "boolean"
+          },
+          "cursosBiblicos": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "horas": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "tipoInformativo": {
+            "$ref": "#/components/schemas/TipoPublicador"
+          },
+          "inactivo": {
+            "type": "boolean"
+          },
+          "observacion": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -726,6 +1222,9 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "inactivo": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -806,19 +1305,59 @@
         },
         "additionalProperties": false
       },
+      "QuitarPublicadoresDto": {
+        "type": "object",
+        "properties": {
+          "idGrupo": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "idPublicadores": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "RegistrarAsistenciaDto": {
         "type": "object",
         "properties": {
-          "fecha": {
+          "fechaReunion": {
             "type": "string",
             "format": "date-time"
           },
           "tipoReunion": {
             "$ref": "#/components/schemas/TipoReunion"
           },
-          "cantidad": {
+          "cantidadPresencial": {
             "type": "integer",
             "format": "int32"
+          },
+          "cantidadVirtual": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "observacion": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistrarFechaDto": {
+        "type": "object",
+        "properties": {
+          "fechaReunion": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observacion": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -848,6 +1387,16 @@
           "horas": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "tipoInformativo": {
+            "$ref": "#/components/schemas/TipoPublicador"
+          },
+          "inactivo": {
+            "type": "boolean"
+          },
+          "observacion": {
+            "type": "string",
             "nullable": true
           }
         },

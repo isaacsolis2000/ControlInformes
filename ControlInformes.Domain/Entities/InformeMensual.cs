@@ -11,7 +11,9 @@ public class InformeMensual
     public bool Participo { get; set; }
     public int CursosBiblicos { get; set; }
     public int? Horas { get; set; }
-    public TipoPublicador Tipo { get; set; }
+    public TipoPublicador Tipo { get; set; }  // Tipo informativo del mes
+    public bool Inactivo { get; set; }
+    public string? Observacion { get; set; }
 
     public Publicador Publicador { get; set; } = null!;
 }

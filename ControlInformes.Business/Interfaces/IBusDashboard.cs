@@ -5,5 +5,5 @@ namespace ControlInformes.Business.Interfaces;
 
 public interface IBusDashboard
 {
-    //Task<ApiResponse<DashboardDto>> GetDashboardAsync(int ano, int mes);
+    Task<ApiResponse<DashboardDto>> GetDashboardAsync(int ano, int mes);
 }

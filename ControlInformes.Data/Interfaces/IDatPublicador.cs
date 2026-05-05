@@ -1,4 +1,4 @@
-using ControlInformes.Domain.Entities;
+﻿using ControlInformes.Domain.Entities;
 
 namespace ControlInformes.Data.Interfaces;
 
@@ -15,9 +15,11 @@ public interface IDatPublicador
     Task<List<Publicador>> GetByGrupoAsync(Guid idGrupo);
     Task<List<Publicador>> GetSinGrupoAsync();
     Task<(List<Publicador> Items, int Total)> GetPaginadoConGrupoAsync(
-    Guid? idGrupo,
-    Guid? idPublicador,
-    int? tipo,
-    int pagina,
-    int tamanoPagina);
+     Guid? idGrupo,
+     Guid? idPublicador,
+     string? nombreCompleto,  // ← nuevo
+     int? tipo,
+     bool? inactivo,           // ← nuevo
+     int pagina,
+     int tamanoPagina);
 }

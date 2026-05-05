@@ -1,4 +1,4 @@
-using ControlInformes.Business.DTOs;
+﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
 using ControlInformes.Data.Interfaces;
 using ControlInformes.Domain.Enums;
@@ -32,134 +32,124 @@ public class BusDashboard : IBusDashboard
         _logger = logger;
     }
 
-    //public async Task<ApiResponse<DashboardDto>> GetDashboardAsync(int ano, int mes)
-    //{
-    //    try
-    //    {
-    //        if (ano < 1 || mes < 1 || mes > 12)
-    //            return ApiResponse<DashboardDto>.Fail("A�o o mes inv�lido.", ErrorCatalog.ValidacionFallida, 400);
+    public async Task<ApiResponse<DashboardDto>> GetDashboardAsync(int ano, int mes)
+    {
+        try
+        {
+            if (ano < 2000 || ano > 2100 || mes < 1 || mes > 12)
+                return ApiResponse<DashboardDto>.Fail("Año o mes inválido.", ErrorCatalog.ValidacionFallida, 400);
 
-    //        // Cargar datos del mes actual
-    //        var publicadoresActivos = await _datPublicador.GetActivosAsync();
-    //        var informesMes = await _datInforme.GetByMesAsync(ano, mes);
+            var primerDia = new DateTime(ano, mes, 1);
 
-    //        var primerDia = new DateTime(ano, mes, 1);
-    //        var ultimoDia = primerDia.AddMonths(1).AddDays(-1);
-    //        var asistenciasMes = await _datAsistencia.GetByRangoAsync(primerDia, ultimoDia);
+            // ── Datos mes actual ──────────────────────────────────────────────
+            var publicadoresActivos = await _datPublicador.GetActivosAsync();
+            var informesMes = await _datInforme.GetByMesAsync(ano, mes);
+            var (reunionesMes, _) = await _datAsistencia.GetPaginadoAsync(ano, mes, null, 1, 100);
 
-    //        // Cargar datos del mes anterior (para variaciones)
-    //        var fechaAnterior = primerDia.AddMonths(-1);
-    //        var informesMesAnterior = await _datInforme.GetByMesAsync(fechaAnterior.Year, fechaAnterior.Month);
-    //        var primerDiaAnterior = new DateTime(fechaAnterior.Year, fechaAnterior.Month, 1);
-    //        var ultimoDiaAnterior = primerDiaAnterior.AddMonths(1).AddDays(-1);
-    //        var asistenciasMesAnterior = await _datAsistencia.GetByRangoAsync(primerDiaAnterior, ultimoDiaAnterior);
+            // ── Datos mes anterior ────────────────────────────────────────────
+            var fechaAnterior = primerDia.AddMonths(-1);
+            var informesAnterior = await _datInforme.GetByMesAsync(fechaAnterior.Year, fechaAnterior.Month);
+            var (reunionesAnterior, _) = await _datAsistencia.GetPaginadoAsync(
+                fechaAnterior.Year, fechaAnterior.Month, null, 1, 100);
 
-    //        // KPIs
-    //        var kpis = new KpisDto
-    //        {
-    //            TotalPublicadoresActivos = publicadoresActivos.Count,
-    //            InformesRecibidos = informesMes.Count,
-    //            TotalCursosBiblicos = informesMes.Sum(i => i.CursosBiblicos),
-    //            TotalHorasPrecursores = informesMes.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value),
-    //            PromedioAsistencia = asistenciasMes.Count > 0 ? Math.Round(asistenciasMes.Average(a => a.Cantidad), 1) : 0
-    //        };
+            // ── Cards publicadores ────────────────────────────────────────────
+            var infPublicadores = informesMes.Where(i =>
+                i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();
+            var infAuxiliares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
+            var infRegulares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
 
-    //        // Tipos de publicador (activos)
-    //        var tiposPublicador = new TiposPublicadorDto
-    //        {
-    //            Publicadores = publicadoresActivos.Count(p =>
-    //                p.Tipo == TipoPublicador.Publicador || p.Tipo == TipoPublicador.NoBautizado),
-    //            PrecursoresAuxiliares = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorAuxiliar),
-    //            PrecursoresRegulares = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorRegular)
-    //        };
+            var infPubAnterior = informesAnterior.Where(i =>
+                i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();
+            var infAuxAnterior = informesAnterior.Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
+            var infRegAnterior = informesAnterior.Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
 
-    //        // Distribuci�n por categor�a
-    //        var infPublicadores = informesMes.Where(i =>
-    //            i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();
-    //        var infAuxiliares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
-    //        var infRegulares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
+            // ── Cards reuniones ───────────────────────────────────────────────
+            var reunionesPublicas = reunionesMes.Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
+            var reunionesServicio = reunionesMes.Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
+            var rpAnterior = reunionesAnterior.Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
+            var rsAnterior = reunionesAnterior.Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
 
-    //        var distribucion = new List<DistribucionDto>
-    //        {
-    //            new()
-    //            {
-    //                Tipo = "Publicadores",
-    //                Informes = infPublicadores.Count,
-    //                Cursos = infPublicadores.Sum(i => i.CursosBiblicos),
-    //                Horas = 0
-    //            },
-    //            new()
-    //            {
-    //                Tipo = "PrecursoresAuxiliares",
-    //                Informes = infAuxiliares.Count,
-    //                Cursos = infAuxiliares.Sum(i => i.CursosBiblicos),
-    //                Horas = infAuxiliares.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value)
-    //            },
-    //            new()
-    //            {
-    //                Tipo = "PrecursoresRegulares",
-    //                Informes = infRegulares.Count,
-    //                Cursos = infRegulares.Sum(i => i.CursosBiblicos),
-    //                Horas = infRegulares.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value)
-    //            }
-    //        };
+            var promedioRpActual = reunionesPublicas.Any() ? reunionesPublicas.Average(r => r.Total) : 0;
+            var promedioRsActual = reunionesServicio.Any() ? reunionesServicio.Average(r => r.Total) : 0;
+            var promedioRpAnterior = rpAnterior.Any() ? rpAnterior.Average(r => r.Total) : 0;
+            var promedioRsAnterior = rsAnterior.Any() ? rsAnterior.Average(r => r.Total) : 0;
 
-    //        // Historial semestral (6 meses hacia atr�s incluyendo el actual)
-    //        var historial = new List<HistorialMesDto>();
-    //        for (var i = 5; i >= 0; i--)
-    //        {
-    //            var fecha = primerDia.AddMonths(-i);
-    //            var informesPeriodo = i == 0
-    //                ? informesMes
-    //                : await _datInforme.GetByMesAsync(fecha.Year, fecha.Month);
+            // ── Distribución por tipo (pastel) ────────────────────────────────
+            var distribucion = new List<DistribucionTipoDto>
+            {
+                new() { Tipo = "Publicador",           Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.Publicador) },
+                new() { Tipo = "No Bautizado",         Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.NoBautizado) },
+                new() { Tipo = "Precursor Auxiliar",   Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorAuxiliar) },
+                new() { Tipo = "Precursor Regular",    Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorRegular) }
+            };
 
-    //            historial.Add(new HistorialMesDto
-    //            {
-    //                Mes = _nombresMeses[fecha.Month - 1],
-    //                Ano = fecha.Year,
-    //                PublicadoresActivos = publicadoresActivos.Count,
-    //                Informes = informesPeriodo.Count,
-    //                Cursos = informesPeriodo.Sum(x => x.CursosBiblicos),
-    //                Horas = informesPeriodo.Where(x => x.Horas.HasValue).Sum(x => x.Horas!.Value)
-    //            });
-    //        }
+            // ── Historial semestral (barras) ──────────────────────────────────
+            var historial = new List<HistorialMesDto>();
+            for (var i = 5; i >= 0; i--)
+            {
+                var fecha = primerDia.AddMonths(-i);
+                var informes = i == 0
+                    ? informesMes
+                    : await _datInforme.GetByMesAsync(fecha.Year, fecha.Month);
 
-    //        // Variaciones vs mes anterior
-    //        var promedioAnterior = asistenciasMesAnterior.Count > 0
-    //            ? asistenciasMesAnterior.Average(a => a.Cantidad)
-    //            : 0;
+                historial.Add(new HistorialMesDto
+                {
+                    Ano = fecha.Year,
+                    Mes = _nombresMeses[fecha.Month - 1],
+                    Publicadores = informes.Count(x =>
+                        x.Tipo == TipoPublicador.Publicador || x.Tipo == TipoPublicador.NoBautizado),
+                    PrecursoresAuxiliares = informes.Count(x => x.Tipo == TipoPublicador.PrecursorAuxiliar),
+                    PrecursoresRegulares = informes.Count(x => x.Tipo == TipoPublicador.PrecursorRegular)
+                });
+            }
 
-    //        var variaciones = new VariacionesDto
-    //        {
-    //            CambioInformes = CalcularVariacion(informesMesAnterior.Count, informesMes.Count),
-    //            CambioCursos = CalcularVariacion(
-    //                informesMesAnterior.Sum(i => i.CursosBiblicos),
-    //                informesMes.Sum(i => i.CursosBiblicos)),
-    //            CambioHoras = CalcularVariacion(
-    //                informesMesAnterior.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value),
-    //                informesMes.Where(i => i.Horas.HasValue).Sum(i => i.Horas!.Value)),
-    //            CambioAsistencia = CalcularVariacion(promedioAnterior, kpis.PromedioAsistencia)
-    //        };
+            // ── Armar respuesta ───────────────────────────────────────────────
+            var dashboard = new DashboardDto
+            {
+                Ano = ano,
+                Mes = mes,
+                TotalPublicadoresActivos = publicadoresActivos.Count,
+                TotalInactivos = publicadoresActivos.Count(p => p.Inactivo),
+                Publicadores = new CardInformesDto
+                {
+                    CantidadInformes = infPublicadores.Count,
+                    Variacion = CalcularVariacion(infPubAnterior.Count, infPublicadores.Count)
+                },
+                PrecursoresAuxiliares = new CardInformesDto
+                {
+                    CantidadInformes = infAuxiliares.Count,
+                    Variacion = CalcularVariacion(infAuxAnterior.Count, infAuxiliares.Count)
+                },
+                PrecursoresRegulares = new CardInformesDto
+                {
+                    CantidadInformes = infRegulares.Count,
+                    Variacion = CalcularVariacion(infRegAnterior.Count, infRegulares.Count)
+                },
+                ReunionesPublicas = new CardReunionDto
+                {
+                    CantidadReuniones = reunionesPublicas.Count,
+                    Promedio = Math.Round(promedioRpActual, 1),
+                    Variacion = CalcularVariacion(promedioRpAnterior, promedioRpActual)
+                },
+                ReunionesServicio = new CardReunionDto
+                {
+                    CantidadReuniones = reunionesServicio.Count,
+                    Promedio = Math.Round(promedioRsActual, 1),
+                    Variacion = CalcularVariacion(promedioRsAnterior, promedioRsActual)
+                },
+                DistribucionPorTipo = distribucion,
+                HistorialSemestral = historial
+            };
 
-    //        var dashboard = new DashboardDto
-    //        {
-    //            Ano = ano,
-    //            Mes = mes,
-    //            Kpis = kpis,
-    //            TiposPublicador = tiposPublicador,
-    //            Distribucion = distribucion,
-    //            HistorialSemestral = historial,
-    //            Variaciones = variaciones
-    //        };
-
-    //        return ApiResponse<DashboardDto>.Ok(dashboard);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        _logger.LogError(ex, "Error al obtener dashboard: {Ano}/{Mes}.", ano, mes);
-    //        return ApiResponse<DashboardDto>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
-    //    }
-    //}
+            return ApiResponse<DashboardDto>.Ok(dashboard);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener dashboard: {Ano}/{Mes}.", ano, mes);
+            return ApiResponse<DashboardDto>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
 
     private static double CalcularVariacion(double valorAnterior, double valorActual)
     {

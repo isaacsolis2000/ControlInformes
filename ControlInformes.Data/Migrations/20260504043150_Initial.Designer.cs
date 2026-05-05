@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControlInformes.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260504031310_Initial")]
+    [Migration("20260504043150_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -31,16 +31,31 @@ namespace ControlInformes.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Cantidad")
-                        .HasColumnType("int");
+                    b.Property<int>("CantidadPresencial")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<int>("CantidadVirtual")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime>("FechaReunion")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TipoReunion")
+                    b.Property<string>("Observacion")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("TipoReunion")
                         .HasColumnType("int");
 
                     b.HasKey("IdAsistencia");
+
+                    b.HasIndex("FechaReunion", "TipoReunion")
+                        .IsUnique()
+                        .HasFilter("[TipoReunion] IS NOT NULL");
 
                     b.ToTable("Asistencias");
                 });
@@ -84,8 +99,15 @@ namespace ControlInformes.Data.Migrations
                     b.Property<Guid>("IdPublicador")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Inactivo")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Mes")
                         .HasColumnType("int");
+
+                    b.Property<string>("Observacion")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("Participo")
                         .HasColumnType("bit");

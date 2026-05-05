@@ -85,6 +85,11 @@ public class BusAsistencia : IBusAsistencia
             // Validar duplicado si viene con tipo
             if (dto.TipoReunion.HasValue)
             {
+                // En RegistrarAsync — agregar antes de la validación de duplicado:
+                var errores = ValidarAsistencia(dto.CantidadPresencial, dto.CantidadVirtual);
+                if (errores.Count > 0)
+                    return ApiResponse<Guid>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
+
                 var existente = await _datAsistencia.GetByFechaYTipoAsync(dto.FechaReunion, dto.TipoReunion.Value);
                 if (existente != null)
                     return ApiResponse<Guid>.Error(
@@ -149,6 +154,11 @@ public class BusAsistencia : IBusAsistencia
             // Validar duplicado excluyendo el actual
             if (dto.TipoReunion.HasValue)
             {
+                // En ActualizarAsync — agregar después de verificar que existe:
+                var errores = ValidarAsistencia(dto.CantidadPresencial, dto.CantidadVirtual);
+                if (errores.Count > 0)
+                    return ApiResponse<string>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
+
                 var existente = await _datAsistencia.GetByFechaYTipoAsync(dto.FechaReunion, dto.TipoReunion.Value);
                 if (existente != null && existente.IdAsistencia != dto.IdAsistencia)
                     return ApiResponse<string>.Error(
@@ -197,5 +207,19 @@ public class BusAsistencia : IBusAsistencia
             return ApiResponse<string>.Error(
                 ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
         }
+    }
+
+    // Agregar este helper privado en BusAsistencia:
+    private static List<string> ValidarAsistencia(int cantidadPresencial, int cantidadVirtual)
+    {
+        var errores = new List<string>();
+
+        if (cantidadPresencial < 0)
+            errores.Add("La cantidad presencial no puede ser negativa.");
+
+        if (cantidadVirtual < 0)
+            errores.Add("La cantidad virtual no puede ser negativa.");
+
+        return errores;
     }
 }

@@ -4,51 +4,49 @@ public class DashboardDto
 {
     public int Ano { get; set; }
     public int Mes { get; set; }
-    public KpisDto Kpis { get; set; } = new();
-    public TiposPublicadorDto TiposPublicador { get; set; } = new();
-    public List<DistribucionDto> Distribucion { get; set; } = [];
-    public List<HistorialMesDto> HistorialSemestral { get; set; } = [];
-    public VariacionesDto Variaciones { get; set; } = new();
-}
 
-public class KpisDto
-{
+    // Cards
     public int TotalPublicadoresActivos { get; set; }
-    public int InformesRecibidos { get; set; }
-    public int TotalCursosBiblicos { get; set; }
-    public int TotalHorasPrecursores { get; set; }
-    public double PromedioAsistencia { get; set; }
+    public int TotalInactivos { get; set; }
+
+    public CardInformesDto Publicadores { get; set; } = new();
+    public CardInformesDto PrecursoresAuxiliares { get; set; } = new();
+    public CardInformesDto PrecursoresRegulares { get; set; } = new();
+
+    public CardReunionDto ReunionesPublicas { get; set; } = new();
+    public CardReunionDto ReunionesServicio { get; set; } = new();
+
+    // Gráfica de pastel: distribución por tipo
+    public List<DistribucionTipoDto> DistribucionPorTipo { get; set; } = new();
+
+    // Gráfica de barras: últimos 6 meses por tipo
+    public List<HistorialMesDto> HistorialSemestral { get; set; } = new();
 }
 
-public class TiposPublicadorDto
+public class CardInformesDto
 {
-    public int Publicadores { get; set; }
-    public int PrecursoresAuxiliares { get; set; }
-    public int PrecursoresRegulares { get; set; }
+    public int CantidadInformes { get; set; }
+    public double Variacion { get; set; } // % vs mes anterior
 }
 
-public class DistribucionDto
+public class CardReunionDto
+{
+    public int CantidadReuniones { get; set; }
+    public double Promedio { get; set; }
+    public double Variacion { get; set; } // % vs mes anterior
+}
+
+public class DistribucionTipoDto
 {
     public string Tipo { get; set; } = string.Empty;
-    public int Informes { get; set; }
-    public int Cursos { get; set; }
-    public int Horas { get; set; }
+    public int Cantidad { get; set; }
 }
 
 public class HistorialMesDto
 {
-    public string Mes { get; set; } = string.Empty;
     public int Ano { get; set; }
-    public int PublicadoresActivos { get; set; }
-    public int Informes { get; set; }
-    public int Cursos { get; set; }
-    public int Horas { get; set; }
-}
-
-public class VariacionesDto
-{
-    public double CambioInformes { get; set; }
-    public double CambioCursos { get; set; }
-    public double CambioHoras { get; set; }
-    public double CambioAsistencia { get; set; }
+    public string Mes { get; set; } = string.Empty;
+    public int Publicadores { get; set; }
+    public int PrecursoresAuxiliares { get; set; }
+    public int PrecursoresRegulares { get; set; }
 }

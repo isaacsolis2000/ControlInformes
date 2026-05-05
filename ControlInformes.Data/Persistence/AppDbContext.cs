@@ -49,6 +49,8 @@ public class AppDbContext : DbContext
         {
             entity.HasKey(e => e.IdInformeMensual);
             entity.Property(e => e.Tipo).HasConversion<int>();
+            entity.Property(e => e.Inactivo).IsRequired();
+            entity.Property(e => e.Observacion).HasMaxLength(500).IsRequired(false); // ← nuevo
             entity.HasOne(e => e.Publicador).WithMany(p => p.InformesMensuales).HasForeignKey(e => e.IdPublicador);
             entity.HasIndex(e => new { e.IdPublicador, e.Ano, e.Mes }).IsUnique();
         });

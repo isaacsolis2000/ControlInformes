@@ -1,5 +1,6 @@
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using ControlInformes.Data.Interfaces;
+using ControlInformes.Domain.Enums;
 
 namespace ControlInformes.Data.Implementations;
 
@@ -12,47 +13,86 @@ public class ExcelService : IExcelService
         using var workbook = new XLWorkbook(stream);
         var worksheet = workbook.Worksheets.First();
 
-        var rows = worksheet.RowsUsed().Skip(1);
-
-        foreach (var row in rows)
+        foreach (var row in worksheet.RowsUsed().Skip(1))
         {
-            var fila = new ExcelInformeRow
+            // Saltar filas completamente vacías
+            if (string.IsNullOrWhiteSpace(row.Cell(1).GetString()))
+                continue;
+
+            resultado.Add(new ExcelInformeRow
             {
                 Nombre = row.Cell(1).GetString().Trim(),
                 Tipo = row.Cell(2).GetString().Trim(),
-                Participo = row.Cell(3).GetString().Trim().Equals("S�", StringComparison.OrdinalIgnoreCase)
-                            || row.Cell(3).GetString().Trim().Equals("Si", StringComparison.OrdinalIgnoreCase)
-                            || row.Cell(3).GetString().Trim() == "1"
-                            || row.Cell(3).GetString().Trim().Equals("true", StringComparison.OrdinalIgnoreCase),
+                Participo = ParseBool(row.Cell(3).GetString()),
                 Horas = row.Cell(4).IsEmpty() ? null : (int?)row.Cell(4).GetDouble(),
-                Cursos = row.Cell(5).IsEmpty() ? 0 : (int)row.Cell(5).GetDouble()
-            };
-
-            resultado.Add(fila);
+                Cursos = row.Cell(5).IsEmpty() ? 0 : (int)row.Cell(5).GetDouble(),
+                Inactivo = ParseBool(row.Cell(6).GetString()),       // ← nuevo
+                Observacion = row.Cell(7).IsEmpty()                     // ← nuevo
+                    ? null
+                    : row.Cell(7).GetString().Trim()
+            });
         }
 
         return resultado;
     }
 
-    public byte[] GenerarTemplate()
+    public byte[] GenerarTemplate(List<string> nombresPublicadores)
     {
         using var workbook = new XLWorkbook();
-        var worksheet = workbook.Worksheets.Add("Informes");
+        var ws = workbook.Worksheets.Add("Informes");
 
-        worksheet.Cell(1, 1).Value = "Nombre";
-        worksheet.Cell(1, 2).Value = "Tipo";
-        worksheet.Cell(1, 3).Value = "Particip�";
-        worksheet.Cell(1, 4).Value = "Horas";
-        worksheet.Cell(1, 5).Value = "CursosBiblicos";
+        // ── Encabezados ───────────────────────────────────────────────────────
+        var encabezados = new[] { "Nombre", "Tipo", "Participó", "Horas", "Cursos", "Inactivo", "Observación" };
+        for (int i = 0; i < encabezados.Length; i++)
+            ws.Cell(1, i + 1).Value = encabezados[i];
 
-        var headerRange = worksheet.Range(1, 1, 1, 5);
+        // Estilo encabezados
+        var headerRange = ws.Range(1, 1, 1, encabezados.Length);
         headerRange.Style.Font.Bold = true;
-        headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+        headerRange.Style.Fill.BackgroundColor = XLColor.FromHtml("#4472C4");
+        headerRange.Style.Font.FontColor = XLColor.White;
+        headerRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
-        worksheet.Columns().AdjustToContents();
+        // ── Validación desplegable Tipo ───────────────────────────────────────
+        var tiposValidos = string.Join(",", Enum.GetNames(typeof(TipoPublicador)));
+        var tipoValidation = ws.Range(2, 2, 1000, 2).SetDataValidation();
+        tipoValidation.List($"\"{tiposValidos}\"");
+        tipoValidation.ErrorMessage = "Seleccione un tipo válido.";
+        tipoValidation.ShowErrorMessage = true;
 
-        using var stream = new MemoryStream();
-        workbook.SaveAs(stream);
-        return stream.ToArray();
+        // ── Validación desplegable Participó e Inactivo ───────────────────────
+        foreach (int col in new[] { 3, 6 })
+        {
+            var validation = ws.Range(2, col, 1000, col).SetDataValidation();
+            validation.List("\"Sí,No\"");
+            validation.ErrorMessage = "Seleccione Sí o No.";
+            validation.ShowErrorMessage = true;
+        }
+
+        // ── Llenar publicadores ───────────────────────────────────────────────
+        for (int i = 0; i < nombresPublicadores.Count; i++)
+        {
+            int fila = i + 2;
+            ws.Cell(fila, 1).Value = nombresPublicadores[i];
+            ws.Cell(fila, 3).Value = "No";   // Participó default
+            ws.Cell(fila, 6).Value = "No";   // Inactivo default
+        }
+
+        // ── Proteger columna Nombre ───────────────────────────────────────────
+        ws.Column(1).Style.Protection.Locked = true;
+
+        ws.Columns().AdjustToContents();
+        ws.SheetView.FreezeRows(1); // Fijar encabezado
+
+        using var memStream = new MemoryStream();
+        workbook.SaveAs(memStream);
+        return memStream.ToArray();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+    private static bool ParseBool(string valor)
+    {
+        var v = valor.Trim().ToLower();
+        return v is "sí" or "si" or "1" or "true" or "yes";
     }
 }

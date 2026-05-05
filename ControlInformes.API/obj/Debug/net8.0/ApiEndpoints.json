@@ -1,6 +1,42 @@
 [
   {
     "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "GetPaginado",
+    "RelativePath": "api/asistencia",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Ano",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Mes",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "TipoReunion",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Pagina",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TamanoPagina",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
     "Method": "Registrar",
     "RelativePath": "api/asistencia",
     "HttpMethod": "POST",
@@ -17,21 +53,69 @@
   },
   {
     "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
-    "Method": "GetByRango",
-    "RelativePath": "api/asistencia",
+    "Method": "GetById",
+    "RelativePath": "api/asistencia/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "fechaInicio",
-        "Type": "System.DateTime",
-        "IsRequired": false
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "Actualizar",
+    "RelativePath": "api/asistencia/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
       },
       {
-        "Name": "fechaFin",
-        "Type": "System.DateTime",
-        "IsRequired": false
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.ActualizarAsistenciaDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "Eliminar",
+    "RelativePath": "api/asistencia/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "RegistrarFecha",
+    "RelativePath": "api/asistencia/fecha",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.RegistrarFechaDto",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -95,14 +179,19 @@
         "Name": "mes",
         "Type": "System.Int32",
         "IsRequired": false
+      },
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
   },
   {
     "ContainingType": "ControlInformes.API.Controllers.ExcelController",
-    "Method": "DescargarTemplate",
-    "RelativePath": "api/excel/template",
+    "Method": "DescargarListadoGrupos",
+    "RelativePath": "api/excel/listado-grupos",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -110,7 +199,33 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
+    "ContainingType": "ControlInformes.API.Controllers.ExcelController",
+    "Method": "DescargarListadoPublicadores",
+    "RelativePath": "api/excel/listado-publicadores",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.ExcelController",
+    "Method": "DescargarTemplate",
+    "RelativePath": "api/excel/template/{idGrupo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GruposController",
     "Method": "GetAll",
     "RelativePath": "api/grupos",
     "HttpMethod": "GET",
@@ -120,7 +235,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
+    "ContainingType": "GruposController",
     "Method": "Create",
     "RelativePath": "api/grupos",
     "HttpMethod": "POST",
@@ -136,7 +251,23 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
+    "ContainingType": "GruposController",
+    "Method": "Update",
+    "RelativePath": "api/grupos",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.ActualizarGrupoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GruposController",
     "Method": "GetById",
     "RelativePath": "api/grupos/{id}",
     "HttpMethod": "GET",
@@ -152,28 +283,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
-    "Method": "Update",
-    "RelativePath": "api/grupos/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Guid",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "ControlInformes.Business.DTOs.ActualizarGrupoDto",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
+    "ContainingType": "GruposController",
     "Method": "Delete",
     "RelativePath": "api/grupos/{id}",
     "HttpMethod": "DELETE",
@@ -189,7 +299,23 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ControlInformes.API.Controllers.GruposController",
+    "ContainingType": "GruposController",
+    "Method": "GetMiembros",
+    "RelativePath": "api/grupos/{id}/miembros",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GruposController",
     "Method": "AsignarPublicadores",
     "RelativePath": "api/grupos/asignar-publicadores",
     "HttpMethod": "POST",
@@ -200,6 +326,73 @@
         "Name": "dto",
         "Type": "ControlInformes.Business.DTOs.AsignarPublicadoresDto",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "GruposController",
+    "Method": "QuitarPublicadores",
+    "RelativePath": "api/grupos/quitar-publicadores",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.QuitarPublicadoresDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "GetPaginado",
+    "RelativePath": "api/informes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Ano",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Mes",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "IdGrupo",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "IdPublicador",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Tipo",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "Inactivo",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Pagina",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "TamanoPagina",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -222,8 +415,92 @@
   },
   {
     "ContainingType": "ControlInformes.API.Controllers.InformesController",
-    "Method": "GetByMes",
-    "RelativePath": "api/informes",
+    "Method": "Actualizar",
+    "RelativePath": "api/informes/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.ActualizarInformeDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "Eliminar",
+    "RelativePath": "api/informes/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "Importar",
+    "RelativePath": "api/informes/importar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ano",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "mes",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "archivo",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "DescargarTemplate",
+    "RelativePath": "api/informes/template/{idGrupo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.InformesController",
+    "Method": "GetTotal",
+    "RelativePath": "api/informes/total",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -237,22 +514,6 @@
         "Name": "mes",
         "Type": "System.Int32",
         "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ControlInformes.API.Controllers.InformesController",
-    "Method": "GetHistorial",
-    "RelativePath": "api/informes/historial/{idPublicador}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "idPublicador",
-        "Type": "System.Guid",
-        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -376,8 +637,18 @@
         "IsRequired": false
       },
       {
+        "Name": "NombreCompleto",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
         "Name": "Tipo",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Inactivo",
+        "Type": "System.Nullable\u00601[[System.Boolean, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
       {

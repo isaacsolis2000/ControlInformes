@@ -88,6 +88,13 @@ public class BusGrupo : IBusGrupo
             var capitan = await _datPublicador.GetByIdAsync(dto.IdCapitan);
             if (capitan == null)
                 return ApiResponse<Guid>.NotFound($"Publicador capitán con Id ({dto.IdCapitan}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+            
+            // Validar que el capitán no sea capitán de otro grupo
+            var grupoExistente = await _datGrupo.GetByCapitanAsync(dto.IdCapitan);
+            if (grupoExistente != null)
+                return ApiResponse<Guid>.Error(
+                    $"El publicador '{capitan.NombreCompleto}' ya es capitán del grupo '{grupoExistente.Nombre}'.",
+                    ErrorCatalog.CapitanNoValido);
 
             var grupo = _mapper.Map<Grupo>(dto);
             grupo.IdGrupo = Guid.NewGuid();
@@ -122,6 +129,13 @@ public class BusGrupo : IBusGrupo
             var capitan = await _datPublicador.GetByIdAsync(dto.IdCapitan);
             if (capitan == null)
                 return ApiResponse<string>.NotFound($"Publicador capitán con Id ({dto.IdCapitan}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
+
+            // Validar que el capitán no sea capitán de otro grupo (ignorar si es el mismo grupo)
+            var grupoExistente = await _datGrupo.GetByCapitanAsync(dto.IdCapitan);
+            if (grupoExistente != null && grupoExistente.IdGrupo != dto.IdGrupo)
+                return ApiResponse<string>.Error(
+                    $"El publicador '{capitan.NombreCompleto}' ya es capitán del grupo '{grupoExistente.Nombre}'.",
+                    ErrorCatalog.CapitanNoValido);
 
             grupo.Nombre = dto.Nombre;
             grupo.IdCapitan = dto.IdCapitan;
@@ -195,5 +209,72 @@ public class BusGrupo : IBusGrupo
             return ApiResponse<string>.Error(ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
         }
     }
+    public async Task<ApiResponse<List<PublicadorDto>>> GetMiembrosAsync(Guid idGrupo)
+    {
+        try
+        {
+            var grupo = await _datGrupo.GetByIdAsync(idGrupo);
+            if (grupo == null)
+                return ApiResponse<List<PublicadorDto>>.NotFound(
+                    $"Grupo con Id ({idGrupo}) no encontrado.",
+                    ErrorCatalog.EntidadNoEncontrada);
 
+            var publicadores = await _datPublicador.GetByGrupoAsync(idGrupo);
+            var result = _mapper.Map<List<PublicadorDto>>(publicadores);
+            return ApiResponse<List<PublicadorDto>>.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener miembros del grupo: {Id}.", idGrupo);
+            return ApiResponse<List<PublicadorDto>>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
+    public async Task<ApiResponse<string>> QuitarPublicadoresAsync(QuitarPublicadoresDto dto)
+    {
+        try
+        {
+            var grupo = await _datGrupo.GetByIdAsync(dto.IdGrupo);
+            if (grupo == null)
+                return ApiResponse<string>.NotFound(
+                    $"Grupo con Id ({dto.IdGrupo}) no encontrado.",
+                    ErrorCatalog.EntidadNoEncontrada);
+
+            foreach (var idPublicador in dto.IdPublicadores)
+            {
+                var publicador = await _datPublicador.GetByIdAsync(idPublicador);
+                if (publicador == null)
+                    return ApiResponse<string>.NotFound(
+                        $"Publicador con Id ({idPublicador}) no encontrado.",
+                        ErrorCatalog.EntidadNoEncontrada);
+
+                // Validar que pertenezca a este grupo
+                if (publicador.IdGrupo != dto.IdGrupo)
+                    return ApiResponse<string>.Error(
+                        $"El publicador '{publicador.NombreCompleto}' no pertenece a este grupo.",
+                        ErrorCatalog.ValidacionFallida);
+
+                // Validar que no sea el capitán del grupo
+                if (grupo.IdCapitan == idPublicador)
+                    return ApiResponse<string>.Error(
+                        $"El publicador '{publicador.NombreCompleto}' es el capitán del grupo y no puede ser removido.",
+                        ErrorCatalog.ValidacionFallida);
+
+                publicador.IdGrupo = null;
+                _datPublicador.Update(publicador);
+            }
+
+            await _datPublicador.SaveChangesAsync(CancellationToken.None);
+
+            _logger.LogInformation("Publicadores removidos del grupo: {Id}", dto.IdGrupo);
+            return ApiResponse<string>.Ok("Publicadores removidos correctamente.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al quitar publicadores del grupo: {Id}.", dto.IdGrupo);
+            return ApiResponse<string>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
 }

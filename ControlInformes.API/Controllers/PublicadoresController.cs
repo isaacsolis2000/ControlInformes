@@ -1,4 +1,4 @@
-using ControlInformes.Business.DTOs;
+﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,44 +22,7 @@ public class PublicadoresController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
-    {
-        var response = await _busPublicador.GetByIdAsync(id);
-        return StatusCode(response.HttpCode, response);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CrearPublicadorDto dto)
-    {
-        var response = await _busPublicador.CrearAsync(dto);
-        return StatusCode(response.HttpCode, response);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarPublicadorDto dto)
-    {
-        if (id != dto.IdPublicador)
-            return BadRequest(new { HasError = true, Mensaje = "El ID no coincide." });
-
-        var response = await _busPublicador.ActualizarAsync(dto);
-        return StatusCode(response.HttpCode, response);
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        var response = await _busPublicador.EliminarAsync(id);
-        return StatusCode(response.HttpCode, response);
-    }
-
-    [HttpGet("{id}/tarjeta")]
-    public async Task<IActionResult> GetTarjeta(Guid id, [FromQuery] int? anoServicio)
-    {
-        var response = await _busPublicador.GetTarjetaAsync(id, anoServicio);
-        return StatusCode(response.HttpCode, response);
-    }
-
+    // Rutas fijas ANTES de {id}
     [HttpGet("sin-grupo")]
     public async Task<IActionResult> GetSinGrupo()
     {
@@ -74,4 +37,42 @@ public class PublicadoresController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
+    // Rutas con parámetro DESPUÉS
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var response = await _busPublicador.GetByIdAsync(id);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpGet("{id:guid}/tarjeta")]
+    public async Task<IActionResult> GetTarjeta(Guid id, [FromQuery] int? anoServicio)
+    {
+        var response = await _busPublicador.GetTarjetaAsync(id, anoServicio);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CrearPublicadorDto dto)
+    {
+        var response = await _busPublicador.CrearAsync(dto);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] ActualizarPublicadorDto dto)
+    {
+        if (id != dto.IdPublicador)
+            return BadRequest(new { HasError = true, Mensaje = "El ID no coincide." });
+
+        var response = await _busPublicador.ActualizarAsync(dto);
+        return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var response = await _busPublicador.EliminarAsync(id);
+        return StatusCode(response.HttpCode, response);
+    }
 }

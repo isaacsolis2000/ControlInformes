@@ -15,7 +15,15 @@ public class MappingProfile : Profile
 
         // Informe
         CreateMap<InformeMensual, InformeMensualDto>()
-            .ForMember(d => d.NombrePublicador, opt => opt.MapFrom(s => s.Publicador != null ? s.Publicador.NombreCompleto : string.Empty));
+            .ForMember(d => d.NombrePublicador,
+                opt => opt.MapFrom(s => s.Publicador != null ? s.Publicador.NombreCompleto : string.Empty))
+            .ForMember(d => d.NombreGrupo,
+                opt => opt.MapFrom(s => s.Publicador != null && s.Publicador.Grupo != null
+                    ? s.Publicador.Grupo.Nombre : string.Empty))
+            .ForMember(d => d.IdGrupo,
+                opt => opt.MapFrom(s => s.Publicador != null ? s.Publicador.IdGrupo : null))
+            .ForMember(d => d.TipoDescripcion,
+                opt => opt.MapFrom(s => s.Tipo.ToString()));
 
         // Asistencia
         CreateMap<Asistencia, AsistenciaDto>()
@@ -41,8 +49,14 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Publicadores, opt => opt.Ignore());
 
         CreateMap<Grupo, GrupoDto>()
-            .ForMember(dest => dest.NombreCapitan,
-                opt => opt.MapFrom(src => src.Capitan != null ? src.Capitan.NombreCompleto : string.Empty));
+             .ForMember(dest => dest.NombreCapitan,
+                 opt => opt.MapFrom(src => src.Capitan != null
+                     ? src.Capitan.NombreCompleto
+                     : string.Empty))
+             .ForMember(dest => dest.TotalMiembros,
+                 opt => opt.MapFrom(src => src.Publicadores != null
+                     ? src.Publicadores.Count
+                     : 0));
 
         CreateMap<Publicador, PublicadorListadoDto>()
             .ForMember(dest => dest.Tipo,
