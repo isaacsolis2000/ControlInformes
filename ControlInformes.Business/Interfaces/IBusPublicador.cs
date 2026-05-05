@@ -13,4 +13,6 @@ public interface IBusPublicador
     Task<ApiResponse<TarjetaPublicadorDto>> GetTarjetaAsync(Guid idPublicador, int? anoServicio);
     Task<ApiResponse<List<PublicadorDto>>> GetSinGrupoAsync();
     Task<ApiResponse<PagedResult<PublicadorGrupoDto>>> GetListadoPaginadoAsync(FiltroPublicadorGrupoDto filtro);
+    // IBusPublicador — agregar:
+    Task<ApiResponse<byte[]>> DescargarTarjetaPdfAsync(Guid idPublicador, int? anoServicio);
 }

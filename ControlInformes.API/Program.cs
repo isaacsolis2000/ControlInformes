@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using ControlInformes.API.Middleware;
 using ControlInformes.Business;
 using ControlInformes.Business.Settings;

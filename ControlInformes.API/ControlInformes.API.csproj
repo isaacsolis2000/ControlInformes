@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="itext7" Version="9.6.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
@@ -15,12 +17,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
+    <ItemGroup>
+	    <None Update="Template\Template_Tarjeta_Publicador.pdf">
+		    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	    </None>
+    </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ControlInformes.Domain\ControlInformes.Domain.csproj" />
     <ProjectReference Include="..\ControlInformes.Utils\ControlInformes.Utils.csproj" />
     <ProjectReference Include="..\ControlInformes.Data\ControlInformes.Data.csproj" />
     <ProjectReference Include="..\ControlInformes.Business\ControlInformes.Business.csproj" />
   </ItemGroup>
-
 </Project>

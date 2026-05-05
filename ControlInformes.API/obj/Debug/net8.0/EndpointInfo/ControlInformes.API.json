@@ -1082,6 +1082,37 @@
         }
       }
     },
+    "/api/publicadores/{id}/tarjeta/pdf": {
+      "get": {
+        "tags": [
+          "Publicadores"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "anoServicio",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/reportes/resumen-mensual": {
       "get": {
         "tags": [
@@ -1215,8 +1246,17 @@
             "format": "date-time",
             "nullable": true
           },
+          "genero": {
+            "$ref": "#/components/schemas/Genero"
+          },
+          "condicionEspiritual": {
+            "$ref": "#/components/schemas/CondicionEspiritual"
+          },
           "tipo": {
             "$ref": "#/components/schemas/TipoPublicador"
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolCongregacion"
           },
           "idGrupo": {
             "type": "string",
@@ -1247,6 +1287,14 @@
         },
         "additionalProperties": false
       },
+      "CondicionEspiritual": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
       "CrearGrupoDto": {
         "type": "object",
         "properties": {
@@ -1270,15 +1318,25 @@
           },
           "fechaNacimiento": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "fechaBautismo": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
+          "genero": {
+            "$ref": "#/components/schemas/Genero"
+          },
+          "condicionEspiritual": {
+            "$ref": "#/components/schemas/CondicionEspiritual"
+          },
           "tipo": {
             "$ref": "#/components/schemas/TipoPublicador"
+          },
+          "rol": {
+            "$ref": "#/components/schemas/RolCongregacion"
           },
           "idGrupo": {
             "type": "string",
@@ -1290,6 +1348,14 @@
           }
         },
         "additionalProperties": false
+      },
+      "Genero": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "LoginRequestDto": {
         "type": "object",
@@ -1401,6 +1467,15 @@
           }
         },
         "additionalProperties": false
+      },
+      "RolCongregacion": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "TipoPublicador": {
         "enum": [

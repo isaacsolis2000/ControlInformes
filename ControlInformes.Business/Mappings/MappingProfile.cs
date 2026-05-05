@@ -9,7 +9,18 @@ public class MappingProfile : Profile
     public MappingProfile()
     {
         // Publicador
-        CreateMap<Publicador, PublicadorDto>().ReverseMap();
+        CreateMap<Publicador, PublicadorDto>()
+        .ForMember(d => d.GeneroDescripcion,
+            opt => opt.MapFrom(s => s.Genero.ToString()))
+        .ForMember(d => d.CondicionEspiritualDescripcion,
+            opt => opt.MapFrom(s => s.CondicionEspiritual.ToString()))
+        .ForMember(d => d.TipoDescripcion,
+            opt => opt.MapFrom(s => s.Tipo.ToString()))
+        .ForMember(d => d.RolDescripcion,
+            opt => opt.MapFrom(s => s.Rol.ToString()))
+        .ForMember(d => d.NombreGrupo,
+            opt => opt.MapFrom(s => s.Grupo != null ? s.Grupo.Nombre : string.Empty));
+
         CreateMap<CrearPublicadorDto, Publicador>();
         CreateMap<ActualizarPublicadorDto, Publicador>();
 

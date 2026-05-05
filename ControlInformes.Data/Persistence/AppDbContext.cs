@@ -22,14 +22,16 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.IdPublicador);
             entity.Property(e => e.NombreCompleto).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Tipo).HasConversion<int>();
+            entity.Property(e => e.Genero).HasConversion<int>();                      // ← nuevo
+            entity.Property(e => e.CondicionEspiritual).HasConversion<int>();         // ← nuevo
+            entity.Property(e => e.Rol).HasConversion<int>();                         // ← nuevo
             entity.Property(e => e.Inactivo).IsRequired();
             entity.Property(e => e.Activo).IsRequired();
             entity.Property(e => e.FechaCreacion).IsRequired();
-
-            entity.HasOne(e => e.Grupo)              
-                  .WithMany(g => g.Publicadores)     
-                  .HasForeignKey(e => e.IdGrupo)     
-                  .IsRequired(false)                 
+            entity.HasOne(e => e.Grupo)
+                  .WithMany(g => g.Publicadores)
+                  .HasForeignKey(e => e.IdGrupo)
+                  .IsRequired(false)
                   .OnDelete(DeleteBehavior.SetNull);
         });
 

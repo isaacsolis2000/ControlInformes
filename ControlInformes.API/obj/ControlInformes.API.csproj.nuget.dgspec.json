@@ -80,6 +80,14 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.6.0, )"
             }
           },
           "imports": [
@@ -176,6 +184,14 @@
             "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
               "version": "[8.17.0, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.6.0, )"
             }
           },
           "imports": [
@@ -274,6 +290,14 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.11, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.6.0, )"
             }
           },
           "imports": [
@@ -341,6 +365,16 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "itext7": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -406,6 +440,16 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "itext7": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.6.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

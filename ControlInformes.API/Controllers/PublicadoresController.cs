@@ -75,4 +75,18 @@ public class PublicadoresController : ControllerBase
         var response = await _busPublicador.EliminarAsync(id);
         return StatusCode(response.HttpCode, response);
     }
+
+    // PublicadoresController — agregar:
+    [HttpGet("{id:guid}/tarjeta/pdf")]
+    public async Task<IActionResult> DescargarTarjetaPdf(Guid id, [FromQuery] int? anoServicio)
+    {
+        var response = await _busPublicador.DescargarTarjetaPdfAsync(id, anoServicio);
+        if (response.HasError)
+            return StatusCode(response.HttpCode, response);
+
+        return File(
+            response.Result!,
+            "application/pdf",
+            $"tarjeta_{id}.pdf");
+    }
 }

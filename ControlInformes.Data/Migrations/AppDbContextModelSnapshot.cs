@@ -129,6 +129,9 @@ namespace ControlInformes.Data.Migrations
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
 
+                    b.Property<int>("CondicionEspiritual")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("FechaBautismo")
                         .HasColumnType("datetime2");
 
@@ -137,6 +140,9 @@ namespace ControlInformes.Data.Migrations
 
                     b.Property<DateTime?>("FechaNacimiento")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Genero")
+                        .HasColumnType("int");
 
                     b.Property<Guid?>("IdGrupo")
                         .HasColumnType("uniqueidentifier");
@@ -148,6 +154,9 @@ namespace ControlInformes.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Rol")
+                        .HasColumnType("int");
 
                     b.Property<int>("Tipo")
                         .HasColumnType("int");
