@@ -89,4 +89,33 @@ public class PublicadoresController : ControllerBase
             "application/pdf",
             $"tarjeta_{id}.pdf");
     }
+
+    [HttpGet("grupo/{idGrupo:guid}/tarjetas/pdf")]
+    public async Task<IActionResult> DescargarTarjetasPorGrupo(Guid idGrupo, [FromQuery] int? anoServicio)
+    {
+        var response = await _busPublicador.DescargarTarjetasPorGrupoAsync(idGrupo, anoServicio);
+        if (response.HasError)
+            return StatusCode(response.HttpCode, response);
+
+        return File(
+            response.Result!,
+            "application/zip",
+            $"tarjetas_grupo_{anoServicio}.zip");
+    }
+
+    [HttpPost("importar-tarjetas")]
+    public async Task<IActionResult> ImportarTarjetas(
+    [FromForm] IFormFileCollection archivos,
+    [FromQuery] Guid? idGrupo)
+    {
+        if (archivos == null || archivos.Count == 0)
+            return BadRequest(new { HasError = true, Mensaje = "Debe proporcionar al menos un archivo PDF." });
+
+        if (archivos.Any(a => !a.FileName.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)))
+            return BadRequest(new { HasError = true, Mensaje = "Solo se aceptan archivos PDF." });
+
+        var lista = archivos.ToList();
+        var response = await _busPublicador.ImportarTarjetasAsync(lista, idGrupo);
+        return StatusCode(response.HttpCode, response);
+    }
 }

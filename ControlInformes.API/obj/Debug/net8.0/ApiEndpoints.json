@@ -145,13 +145,13 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "ano",
+        "Name": "anoServicio",
         "Type": "System.Int32",
         "IsRequired": false
       },
       {
         "Name": "mes",
-        "Type": "System.Int32",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
@@ -634,6 +634,48 @@
       {
         "Name": "anoServicio",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "DescargarTarjetasPorGrupo",
+    "RelativePath": "api/publicadores/grupo/{idGrupo}/tarjetas/pdf",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "anoServicio",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "ImportarTarjetas",
+    "RelativePath": "api/publicadores/importar-tarjetas",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "archivos",
+        "Type": "Microsoft.AspNetCore.Http.IFormFileCollection",
+        "IsRequired": false
+      },
+      {
+        "Name": "idGrupo",
+        "Type": "System.Nullable\u00601[[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],

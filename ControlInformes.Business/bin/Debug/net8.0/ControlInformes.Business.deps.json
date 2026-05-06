@@ -13,6 +13,7 @@
           "ControlInformes.Data": "1.0.0",
           "ControlInformes.Domain": "1.0.0",
           "ControlInformes.Utils": "1.0.0",
+          "Microsoft.AspNetCore.Http.Features": "5.0.17",
           "Microsoft.Extensions.Options": "10.0.7",
           "System.IdentityModel.Tokens.Jwt": "8.17.0",
           "itext7": "9.6.0",
@@ -234,6 +235,18 @@
       "itext7.bouncy-castle-adapter/9.6.0": {
         "dependencies": {
           "itext.bouncy-castle-adapter": "9.6.0"
+        }
+      },
+      "Microsoft.AspNetCore.Http.Features/5.0.17": {
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "10.0.7",
+          "System.IO.Pipelines": "10.0.2"
+        },
+        "runtime": {
+          "lib/net5.0/Microsoft.AspNetCore.Http.Features.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.1722.21507"
+          }
         }
       },
       "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
@@ -1724,6 +1737,13 @@
       "sha512": "sha512-COVLcM1Jo5H0hLgHqbbhVWMVmy8byGsWYXPPx+1GMQflCF6198JcUTMETEo3vOnoZtdXcELtFtsSkbp6+h9H+g==",
       "path": "itext7.bouncy-castle-adapter/9.6.0",
       "hashPath": "itext7.bouncy-castle-adapter.9.6.0.nupkg.sha512"
+    },
+    "Microsoft.AspNetCore.Http.Features/5.0.17": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3jG2xS+dx8DDCGV/F+STdPTg89lX3ao3dF/VEPvJaz3wzBIjuadipTtYNEXDIVuOPZwb6jdmhrX9jkzOIBm5cw==",
+      "path": "microsoft.aspnetcore.http.features/5.0.17",
+      "hashPath": "microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512"
     },
     "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
       "type": "package",

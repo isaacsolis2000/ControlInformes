@@ -240,7 +240,7 @@
         ],
         "parameters": [
           {
-            "name": "ano",
+            "name": "anoServicio",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -1106,6 +1106,82 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/publicadores/grupo/{idGrupo}/tarjetas/pdf": {
+      "get": {
+        "tags": [
+          "Publicadores"
+        ],
+        "parameters": [
+          {
+            "name": "idGrupo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "anoServicio",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/publicadores/importar-tarjetas": {
+      "post": {
+        "tags": [
+          "Publicadores"
+        ],
+        "parameters": [
+          {
+            "name": "idGrupo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "archivos": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "archivos": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"

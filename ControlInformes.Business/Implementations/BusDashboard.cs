@@ -14,10 +14,21 @@ public class BusDashboard : IBusDashboard
     private readonly IDatAsistencia _datAsistencia;
     private readonly ILogger<BusDashboard> _logger;
 
-    private static readonly string[] _nombresMeses =
+    // Orden Sep→Ago del año de servicio
+    private static readonly (int Mes, string Nombre)[] _mesesServicio =
     [
-        "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+        (9,  "Septiembre"),
+        (10, "Octubre"),
+        (11, "Noviembre"),
+        (12, "Diciembre"),
+        (1,  "Enero"),
+        (2,  "Febrero"),
+        (3,  "Marzo"),
+        (4,  "Abril"),
+        (5,  "Mayo"),
+        (6,  "Junio"),
+        (7,  "Julio"),
+        (8,  "Agosto")
     ];
 
     public BusDashboard(
@@ -32,120 +43,215 @@ public class BusDashboard : IBusDashboard
         _logger = logger;
     }
 
-    public async Task<ApiResponse<DashboardDto>> GetDashboardAsync(int ano, int mes)
+    public async Task<ApiResponse<DashboardDto>> GetDashboardAsync(int anoServicio, int? mes)
     {
         try
         {
-            if (ano < 2000 || ano > 2100 || mes < 1 || mes > 12)
-                return ApiResponse<DashboardDto>.Fail("Año o mes inválido.", ErrorCatalog.ValidacionFallida, 400);
+            if (anoServicio < 2000 || anoServicio > 2100)
+                return ApiResponse<DashboardDto>.Fail(
+                    "Año de servicio inválido.", ErrorCatalog.ValidacionFallida, 400);
 
-            var primerDia = new DateTime(ano, mes, 1);
+            if (mes.HasValue && (mes < 1 || mes > 12))
+                return ApiResponse<DashboardDto>.Fail(
+                    "Mes inválido.", ErrorCatalog.ValidacionFallida, 400);
 
-            // ── Datos mes actual ──────────────────────────────────────────────
+            int anoFin = anoServicio + 1;
+
+            // ── Publicadores ──────────────────────────────────────────────
             var publicadoresActivos = await _datPublicador.GetActivosAsync();
-            var informesMes = await _datInforme.GetByMesAsync(ano, mes);
-            var (reunionesMes, _) = await _datAsistencia.GetPaginadoAsync(ano, mes, null, 1, 100);
 
-            // ── Datos mes anterior ────────────────────────────────────────────
-            var fechaAnterior = primerDia.AddMonths(-1);
-            var informesAnterior = await _datInforme.GetByMesAsync(fechaAnterior.Year, fechaAnterior.Month);
-            var (reunionesAnterior, _) = await _datAsistencia.GetPaginadoAsync(
-                fechaAnterior.Year, fechaAnterior.Month, null, 1, 100);
+            // ── Cargar informes de todo el año de servicio (12 meses) ─────
+            // Sep-Dic del anoServicio + Ene-Ago del anoFin
+            var informesAno = new List<Domain.Entities.InformeMensual>();
+            for (int m = 9; m <= 12; m++)
+                informesAno.AddRange(await _datInforme.GetByMesAsync(anoServicio, m));
+            for (int m = 1; m <= 8; m++)
+                informesAno.AddRange(await _datInforme.GetByMesAsync(anoFin, m));
 
-            // ── Cards publicadores ────────────────────────────────────────────
-            var infPublicadores = informesMes.Where(i =>
-                i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();
-            var infAuxiliares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
-            var infRegulares = informesMes.Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
+            // ── Filtrar informes para cards ───────────────────────────────
+            // Si hay mes: solo ese mes | Si no: acumulado del año
+            List<Domain.Entities.InformeMensual> informesFiltrados;
+            List<Domain.Entities.InformeMensual> informesComparacion;
 
-            var infPubAnterior = informesAnterior.Where(i =>
-                i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado).ToList();
-            var infAuxAnterior = informesAnterior.Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
-            var infRegAnterior = informesAnterior.Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
+            if (mes.HasValue)
+            {
+                // Mes actual filtrado
+                int anoDelMes = mes.Value >= 9 ? anoServicio : anoFin;
+                informesFiltrados = informesAno
+                    .Where(i => i.Mes == mes.Value && i.Ano == anoDelMes)
+                    .ToList();
 
-            // ── Cards reuniones ───────────────────────────────────────────────
-            var reunionesPublicas = reunionesMes.Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
-            var reunionesServicio = reunionesMes.Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
-            var rpAnterior = reunionesAnterior.Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
-            var rsAnterior = reunionesAnterior.Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
+                // Mes anterior para variación
+                int mesAnterior = mes.Value == 1 ? 12 : mes.Value - 1;
+                int anoMesAnterior = mesAnterior >= 9 ? anoServicio : anoFin;
+                informesComparacion = informesAno
+                    .Where(i => i.Mes == mesAnterior && i.Ano == anoMesAnterior)
+                    .ToList();
+            }
+            else
+            {
+                // Acumulado del año completo
+                informesFiltrados = informesAno;
+                informesComparacion = new List<Domain.Entities.InformeMensual>();
+            }
+
+            // ── Cards de publicadores ─────────────────────────────────────
+            var infPublicadores = informesFiltrados
+                .Where(i => i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado)
+                .ToList();
+            var infAuxiliares = informesFiltrados
+                .Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar)
+                .ToList();
+            var infRegulares = informesFiltrados
+                .Where(i => i.Tipo == TipoPublicador.PrecursorRegular)
+                .ToList();
+
+            var infPubComp = informesComparacion
+                .Where(i => i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado)
+                .ToList();
+            var infAuxComp = informesComparacion
+                .Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar)
+                .ToList();
+            var infRegComp = informesComparacion
+                .Where(i => i.Tipo == TipoPublicador.PrecursorRegular)
+                .ToList();
+
+            // ── Cards de reuniones ────────────────────────────────────────
+            List<Domain.Entities.Asistencia> reunionesFiltradas;
+            List<Domain.Entities.Asistencia> reunionesComparacion;
+
+            if (mes.HasValue)
+            {
+                int anoDelMes = mes.Value >= 9 ? anoServicio : anoFin;
+                var (rMes, _) = await _datAsistencia.GetPaginadoAsync(
+                    anoDelMes, mes.Value, null, 1, 100);
+                reunionesFiltradas = rMes;
+
+                int mesAnterior = mes.Value == 1 ? 12 : mes.Value - 1;
+                int anoMesAnterior = mesAnterior >= 9 ? anoServicio : anoFin;
+                var (rAnterior, _) = await _datAsistencia.GetPaginadoAsync(
+                    anoMesAnterior, mesAnterior, null, 1, 100);
+                reunionesComparacion = rAnterior;
+            }
+            else
+            {
+                // Cargar todas las reuniones del año de servicio
+                reunionesFiltradas = new List<Domain.Entities.Asistencia>();
+                reunionesComparacion = new List<Domain.Entities.Asistencia>();
+
+                for (int m = 9; m <= 12; m++)
+                {
+                    var (r, _) = await _datAsistencia.GetPaginadoAsync(anoServicio, m, null, 1, 100);
+                    reunionesFiltradas.AddRange(r);
+                }
+                for (int m = 1; m <= 8; m++)
+                {
+                    var (r, _) = await _datAsistencia.GetPaginadoAsync(anoFin, m, null, 1, 100);
+                    reunionesFiltradas.AddRange(r);
+                }
+            }
+
+            var reunionesPublicas = reunionesFiltradas
+                .Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
+            var reunionesServicio = reunionesFiltradas
+                .Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
+            var rpComp = reunionesComparacion
+                .Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
+            var rsComp = reunionesComparacion
+                .Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
 
             var promedioRpActual = reunionesPublicas.Any() ? reunionesPublicas.Average(r => r.Total) : 0;
             var promedioRsActual = reunionesServicio.Any() ? reunionesServicio.Average(r => r.Total) : 0;
-            var promedioRpAnterior = rpAnterior.Any() ? rpAnterior.Average(r => r.Total) : 0;
-            var promedioRsAnterior = rsAnterior.Any() ? rsAnterior.Average(r => r.Total) : 0;
+            var promedioRpAnterior = rpComp.Any() ? rpComp.Average(r => r.Total) : 0;
+            var promedioRsAnterior = rsComp.Any() ? rsComp.Average(r => r.Total) : 0;
 
-            // ── Distribución por tipo (pastel) ────────────────────────────────
+            // ── Distribución por tipo (pastel — siempre activos) ──────────
             var distribucion = new List<DistribucionTipoDto>
             {
-                new() { Tipo = "Publicador",           Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.Publicador) },
-                new() { Tipo = "No Bautizado",         Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.NoBautizado) },
-                new() { Tipo = "Precursor Auxiliar",   Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorAuxiliar) },
-                new() { Tipo = "Precursor Regular",    Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorRegular) }
+                new() { Tipo = "Publicador",         Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.Publicador) },
+                new() { Tipo = "No Bautizado",       Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.NoBautizado) },
+                new() { Tipo = "Precursor Auxiliar", Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorAuxiliar) },
+                new() { Tipo = "Precursor Regular",  Cantidad = publicadoresActivos.Count(p => p.Tipo == TipoPublicador.PrecursorRegular) }
             };
 
-            // ── Historial semestral (barras) ──────────────────────────────────
+            // ── Historial 12 meses Sep→Ago (siempre completo) ────────────
             var historial = new List<HistorialMesDto>();
-            for (var i = 5; i >= 0; i--)
+
+            foreach (var (numMes, nombreMes) in _mesesServicio)
             {
-                var fecha = primerDia.AddMonths(-i);
-                var informes = i == 0
-                    ? informesMes
-                    : await _datInforme.GetByMesAsync(fecha.Year, fecha.Month);
+                int anoDelMes = numMes >= 9 ? anoServicio : anoFin;
+                var informesMes = informesAno
+                    .Where(i => i.Mes == numMes && i.Ano == anoDelMes)
+                    .ToList();
 
                 historial.Add(new HistorialMesDto
                 {
-                    Ano = fecha.Year,
-                    Mes = _nombresMeses[fecha.Month - 1],
-                    Publicadores = informes.Count(x =>
+                    Ano = anoDelMes,
+                    NumeroMes = numMes,
+                    Mes = nombreMes,
+                    Publicadores = informesMes.Count(x =>
                         x.Tipo == TipoPublicador.Publicador || x.Tipo == TipoPublicador.NoBautizado),
-                    PrecursoresAuxiliares = informes.Count(x => x.Tipo == TipoPublicador.PrecursorAuxiliar),
-                    PrecursoresRegulares = informes.Count(x => x.Tipo == TipoPublicador.PrecursorRegular)
+                    PrecursoresAuxiliares = informesMes.Count(x => x.Tipo == TipoPublicador.PrecursorAuxiliar),
+                    PrecursoresRegulares = informesMes.Count(x => x.Tipo == TipoPublicador.PrecursorRegular),
+                    EsMesFiltrado = mes.HasValue && mes.Value == numMes
                 });
             }
 
-            // ── Armar respuesta ───────────────────────────────────────────────
+            // ── Armar respuesta ───────────────────────────────────────────
             var dashboard = new DashboardDto
             {
-                Ano = ano,
-                Mes = mes,
+                AnoServicioInicio = anoServicio,
+                AnoServicioFin = anoFin,
+                MesFiltrado = mes,
                 TotalPublicadoresActivos = publicadoresActivos.Count,
                 TotalInactivos = publicadoresActivos.Count(p => p.Inactivo),
                 Publicadores = new CardInformesDto
                 {
                     CantidadInformes = infPublicadores.Count,
-                    Variacion = CalcularVariacion(infPubAnterior.Count, infPublicadores.Count)
+                    Variacion = mes.HasValue
+                        ? CalcularVariacion(infPubComp.Count, infPublicadores.Count)
+                        : 0 // Sin variación en modo anual
                 },
                 PrecursoresAuxiliares = new CardInformesDto
                 {
                     CantidadInformes = infAuxiliares.Count,
-                    Variacion = CalcularVariacion(infAuxAnterior.Count, infAuxiliares.Count)
+                    Variacion = mes.HasValue
+                        ? CalcularVariacion(infAuxComp.Count, infAuxiliares.Count)
+                        : 0
                 },
                 PrecursoresRegulares = new CardInformesDto
                 {
                     CantidadInformes = infRegulares.Count,
-                    Variacion = CalcularVariacion(infRegAnterior.Count, infRegulares.Count)
+                    Variacion = mes.HasValue
+                        ? CalcularVariacion(infRegComp.Count, infRegulares.Count)
+                        : 0
                 },
                 ReunionesPublicas = new CardReunionDto
                 {
                     CantidadReuniones = reunionesPublicas.Count,
                     Promedio = Math.Round(promedioRpActual, 1),
-                    Variacion = CalcularVariacion(promedioRpAnterior, promedioRpActual)
+                    Variacion = mes.HasValue
+                        ? CalcularVariacion(promedioRpAnterior, promedioRpActual)
+                        : 0
                 },
                 ReunionesServicio = new CardReunionDto
                 {
                     CantidadReuniones = reunionesServicio.Count,
                     Promedio = Math.Round(promedioRsActual, 1),
-                    Variacion = CalcularVariacion(promedioRsAnterior, promedioRsActual)
+                    Variacion = mes.HasValue
+                        ? CalcularVariacion(promedioRsAnterior, promedioRsActual)
+                        : 0
                 },
                 DistribucionPorTipo = distribucion,
-                HistorialSemestral = historial
+                Historial12Meses = historial
             };
 
             return ApiResponse<DashboardDto>.Ok(dashboard);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al obtener dashboard: {Ano}/{Mes}.", ano, mes);
+            _logger.LogError(ex, "Error al obtener dashboard: AnoServicio={Ano}, Mes={Mes}.",
+                anoServicio, mes);
             return ApiResponse<DashboardDto>.Error(
                 ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
         }

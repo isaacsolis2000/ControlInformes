@@ -1,39 +1,37 @@
-namespace ControlInformes.Business.DTOs;
+﻿namespace ControlInformes.Business.DTOs;
 
 public class DashboardDto
 {
-    public int Ano { get; set; }
-    public int Mes { get; set; }
+    // ── Contexto del filtro ───────────────────────────────────────────────
+    public int AnoServicioInicio { get; set; }  // ← nuevo
+    public int AnoServicioFin { get; set; }      // ← nuevo
+    public int? MesFiltrado { get; set; }        // ← nuevo (null = todos)
 
-    // Cards
+    // ── Cards (se alimentan del filtro) ──────────────────────────────────
     public int TotalPublicadoresActivos { get; set; }
     public int TotalInactivos { get; set; }
-
     public CardInformesDto Publicadores { get; set; } = new();
     public CardInformesDto PrecursoresAuxiliares { get; set; } = new();
     public CardInformesDto PrecursoresRegulares { get; set; } = new();
-
     public CardReunionDto ReunionesPublicas { get; set; } = new();
     public CardReunionDto ReunionesServicio { get; set; } = new();
 
-    // Gr�fica de pastel: distribuci�n por tipo
+    // ── Gráficas (siempre 12 meses Sep→Ago) ──────────────────────────────
     public List<DistribucionTipoDto> DistribucionPorTipo { get; set; } = new();
-
-    // Gr�fica de barras: �ltimos 6 meses por tipo
-    public List<HistorialMesDto> HistorialSemestral { get; set; } = new();
+    public List<HistorialMesDto> Historial12Meses { get; set; } = new();  // ← renombrado
 }
 
 public class CardInformesDto
 {
     public int CantidadInformes { get; set; }
-    public double Variacion { get; set; } // % vs mes anterior
+    public double Variacion { get; set; }
 }
 
 public class CardReunionDto
 {
     public int CantidadReuniones { get; set; }
     public double Promedio { get; set; }
-    public double Variacion { get; set; } // % vs mes anterior
+    public double Variacion { get; set; }
 }
 
 public class DistribucionTipoDto
@@ -45,8 +43,10 @@ public class DistribucionTipoDto
 public class HistorialMesDto
 {
     public int Ano { get; set; }
+    public int NumeroMes { get; set; }          // ← nuevo para identificar el mes
     public string Mes { get; set; } = string.Empty;
     public int Publicadores { get; set; }
     public int PrecursoresAuxiliares { get; set; }
     public int PrecursoresRegulares { get; set; }
+    public bool EsMesFiltrado { get; set; }     // ← nuevo para resaltar en gráfica
 }

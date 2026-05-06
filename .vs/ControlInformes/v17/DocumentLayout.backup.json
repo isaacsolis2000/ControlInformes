@@ -3,64 +3,24 @@
   "WorkspaceRootPath": "D:\\Cipresses\\Sistema\\ControlInformes\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\implementations\\buspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\implementations\\buspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controllers\\informescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controllers\\informescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controllers\\publicadorescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controllers\\publicadorescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\implementations\\busdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\implementations\\busdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.data\\migrations\\20260505044124_nuevocampospublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|solutionrelative:controlinformes.data\\migrations\\20260505044124_nuevocampospublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\interfaces\\ibusdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\interfaces\\ibusdashboard.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controllers\\dashboardcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controlinformes.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controlinformes.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\interfaces\\ibuspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\interfaces\\ibuspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\dtos\\tarjetapublicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\dtos\\tarjetapublicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\dtos\\publicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\dtos\\publicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\mappings\\mappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\mappings\\mappingprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.data\\persistence\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|solutionrelative:controlinformes.data\\persistence\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.domain\\entities\\publicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|solutionrelative:controlinformes.domain\\entities\\publicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.domain\\enums\\rolcongregacion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|solutionrelative:controlinformes.domain\\enums\\rolcongregacion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.domain\\enums\\condicionespiritual.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|solutionrelative:controlinformes.domain\\enums\\condicionespiritual.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.domain\\enums\\genero.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB20FB2B-2BB1-49FB-9E44-C49A8C84ABF2}|ControlInformes.Domain\\ControlInformes.Domain.csproj|solutionrelative:controlinformes.domain\\enums\\genero.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.data\\implementations\\datpublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|solutionrelative:controlinformes.data\\implementations\\datpublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\dtos\\dashboarddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\dtos\\dashboarddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -70,50 +30,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 11,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PublicadoresController.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\PublicadoresController.cs",
-              "RelativeDocumentMoniker": "ControlInformes.API\\Controllers\\PublicadoresController.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\PublicadoresController.cs",
-              "RelativeToolTip": "ControlInformes.API\\Controllers\\PublicadoresController.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAA0wFIAAABWAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:03:12.174Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BusPublicador.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusPublicador.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\Implementations\\BusPublicador.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusPublicador.cs",
-              "RelativeToolTip": "ControlInformes.Business\\Implementations\\BusPublicador.cs",
-              "ViewState": "AgIAAEUBAAAAAAAAAADgv1wBAABXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:03:58.974Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "DatPublicador.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Implementations\\DatPublicador.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Data\\Implementations\\DatPublicador.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Implementations\\DatPublicador.cs",
-              "RelativeToolTip": "ControlInformes.Data\\Implementations\\DatPublicador.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAASwBYAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:04:03.648Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:15:0:{2456bd12-ecf7-4988-a4a6-67d49173f565}"
@@ -160,158 +78,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "20260505044124_NuevoCamposPublicador.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Migrations\\20260505044124_NuevoCamposPublicador.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Data\\Migrations\\20260505044124_NuevoCamposPublicador.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Migrations\\20260505044124_NuevoCamposPublicador.cs",
-              "RelativeToolTip": "ControlInformes.Data\\Migrations\\20260505044124_NuevoCamposPublicador.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "InformesController.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\InformesController.cs",
+              "RelativeDocumentMoniker": "ControlInformes.API\\Controllers\\InformesController.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\InformesController.cs",
+              "RelativeToolTip": "ControlInformes.API\\Controllers\\InformesController.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA5wCYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:41:31.158Z",
+              "WhenOpened": "2026-05-05T19:19:51.336Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "ControlInformes.API",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
-              "RelativeDocumentMoniker": "ControlInformes.API\\ControlInformes.API.csproj",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
-              "RelativeToolTip": "ControlInformes.API\\ControlInformes.API.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-05-05T04:32:51.857Z",
+              "Title": "DashboardDto.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\DashboardDto.cs",
+              "RelativeDocumentMoniker": "ControlInformes.Business\\DTOs\\DashboardDto.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\DashboardDto.cs",
+              "RelativeToolTip": "ControlInformes.Business\\DTOs\\DashboardDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAIwDMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T19:07:06.269Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Program.cs",
-              "RelativeDocumentMoniker": "ControlInformes.API\\Program.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Program.cs",
-              "RelativeToolTip": "ControlInformes.API\\Program.cs",
-              "ViewState": "AgIAACgAAAAAAAAAAAAuwC4AAAAJAAAAAAAAAA==",
+              "Title": "DashboardController.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\DashboardController.cs",
+              "RelativeDocumentMoniker": "ControlInformes.API\\Controllers\\DashboardController.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\DashboardController.cs",
+              "RelativeToolTip": "ControlInformes.API\\Controllers\\DashboardController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:22:47.42Z",
+              "WhenOpened": "2026-05-05T19:06:48.864Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IBusPublicador.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusPublicador.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\Interfaces\\IBusPublicador.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusPublicador.cs",
-              "RelativeToolTip": "ControlInformes.Business\\Interfaces\\IBusPublicador.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAUAAAARAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "IBusDashboard.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusDashboard.cs",
+              "RelativeDocumentMoniker": "ControlInformes.Business\\Interfaces\\IBusDashboard.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusDashboard.cs",
+              "RelativeToolTip": "ControlInformes.Business\\Interfaces\\IBusDashboard.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:21:11.575Z",
+              "WhenOpened": "2026-05-05T19:06:37.372Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "TarjetaPublicadorDto.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
-              "RelativeToolTip": "ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAAwCIAAAABAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "BusDashboard.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusDashboard.cs",
+              "RelativeDocumentMoniker": "ControlInformes.Business\\Implementations\\BusDashboard.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusDashboard.cs",
+              "RelativeToolTip": "ControlInformes.Business\\Implementations\\BusDashboard.cs",
+              "ViewState": "AgIAANIAAAAAAAAAAAAuwAgBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:18:27.037Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "MappingProfile.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Mappings\\MappingProfile.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\Mappings\\MappingProfile.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Mappings\\MappingProfile.cs",
-              "RelativeToolTip": "ControlInformes.Business\\Mappings\\MappingProfile.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAgwBkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:17:46.965Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Persistence\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Data\\Persistence\\AppDbContext.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Persistence\\AppDbContext.cs",
-              "RelativeToolTip": "ControlInformes.Data\\Persistence\\AppDbContext.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAA1wCMAAAALAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:17:23.835Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "PublicadorDto.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\PublicadorDto.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\DTOs\\PublicadorDto.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\PublicadorDto.cs",
-              "RelativeToolTip": "ControlInformes.Business\\DTOs\\PublicadorDto.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAqwDQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:17:08.862Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "RolCongregacion.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\RolCongregacion.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Domain\\Enums\\RolCongregacion.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\RolCongregacion.cs",
-              "RelativeToolTip": "ControlInformes.Domain\\Enums\\RolCongregacion.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:16:30.036Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "CondicionEspiritual.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\CondicionEspiritual.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Domain\\Enums\\CondicionEspiritual.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\CondicionEspiritual.cs",
-              "RelativeToolTip": "ControlInformes.Domain\\Enums\\CondicionEspiritual.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:16:18.822Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Genero.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\Genero.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Domain\\Enums\\Genero.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Enums\\Genero.cs",
-              "RelativeToolTip": "ControlInformes.Domain\\Enums\\Genero.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:16:07.109Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Publicador.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Entities\\Publicador.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Domain\\Entities\\Publicador.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\Entities\\Publicador.cs",
-              "RelativeToolTip": "ControlInformes.Domain\\Entities\\Publicador.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T04:04:09.566Z",
+              "WhenOpened": "2026-05-05T19:06:26.423Z",
               "EditorCaption": ""
             }
           ]

@@ -76,6 +76,7 @@ public class DatPublicador : IDatPublicador
         query = query
             .OrderBy(p => p.IdGrupo == null ? 1 : 0)
             .ThenBy(p => p.Grupo != null ? p.Grupo.Nombre : string.Empty)
+            .ThenBy(p => p.Tipo)
             .ThenBy(p => p.NombreCompleto);
 
         var total = await query.CountAsync();

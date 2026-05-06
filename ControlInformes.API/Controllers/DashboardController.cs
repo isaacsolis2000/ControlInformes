@@ -1,4 +1,4 @@
-using ControlInformes.Business.Interfaces;
+﻿using ControlInformes.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlInformes.API.Controllers;
@@ -15,9 +15,11 @@ public class DashboardController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDashboard([FromQuery] int ano, [FromQuery] int mes)
+    public async Task<IActionResult> GetDashboard(
+        [FromQuery] int anoServicio,
+        [FromQuery] int? mes)          // ← mes ahora es opcional
     {
-        var response = await _busDashboard.GetDashboardAsync(ano, mes);
+        var response = await _busDashboard.GetDashboardAsync(anoServicio, mes);
         return StatusCode(response.HttpCode, response);
     }
 }

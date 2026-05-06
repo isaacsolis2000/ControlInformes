@@ -6,9 +6,10 @@ using ControlInformes.Domain.Entities;
 using ControlInformes.Domain.Enums;
 using ControlInformes.Utils;
 using iText.Forms;
-using iText.Forms.Fields;
 using iText.Kernel.Pdf;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.IO.Compression;
 
 namespace ControlInformes.Business.Implementations;
 
@@ -306,15 +307,285 @@ public class BusPublicador : IBusPublicador
         }
     }
 
+    public async Task<ApiResponse<byte[]>> DescargarTarjetasPorGrupoAsync(Guid idGrupo, int? anoServicio)
+    {
+        try
+        {
+            if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "Template", "Template_Tarjeta_Publicador.pdf")))
+                return ApiResponse<byte[]>.Error(
+                    "Template de tarjeta no encontrado.", ErrorCatalog.ArchivoInvalido);
+
+            var publicadores = await _datPublicador.GetByGrupoAsync(idGrupo);
+            if (!publicadores.Any())
+                return ApiResponse<byte[]>.NotFound(
+                    $"No se encontraron publicadores en el grupo con Id ({idGrupo}).",
+                    ErrorCatalog.EntidadNoEncontrada);
+
+            var now = DateTime.Now;
+            int anoInicio = anoServicio ?? (now.Month >= 9 ? now.Year : now.Year - 1);
+            int anoFin = anoInicio + 1;
+            string periodo = $"{anoInicio}-{anoFin}";
+
+            using var msZip = new MemoryStream();
+            using var zipArchive = new ZipArchive(msZip, ZipArchiveMode.Create, leaveOpen: true);
+
+            foreach (var publicador in publicadores.OrderBy(p => p.NombreCompleto))
+            {
+                var tarjetaResponse = await GetTarjetaAsync(publicador.IdPublicador, anoServicio);
+                if (tarjetaResponse.HasError) continue;
+
+                var bytesIndividual = GenerarPdfTarjeta(tarjetaResponse.Result!);
+                var nombreArchivo = $"{publicador.NombreCompleto} - {periodo}.pdf";
+
+                foreach (char c in Path.GetInvalidFileNameChars())
+                    nombreArchivo = nombreArchivo.Replace(c, '_');
+
+                var entrada = zipArchive.CreateEntry(nombreArchivo, CompressionLevel.Fastest);
+                using var entradaStream = entrada.Open();
+                await entradaStream.WriteAsync(bytesIndividual);
+            }
+
+            zipArchive.Dispose();
+            return ApiResponse<byte[]>.Ok(msZip.ToArray(), "ZIP generado.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al generar tarjetas del grupo: {Id}.", idGrupo);
+            return ApiResponse<byte[]>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
+    public async Task<ApiResponse<ResultadoImportacionTarjetasDto>> ImportarTarjetasAsync(
+        List<IFormFile> archivos, Guid? idGrupo)
+    {
+        try
+        {
+            var resultado = new ResultadoImportacionTarjetasDto();
+
+            foreach (var archivo in archivos)
+            {
+                try
+                {
+                    using var stream = archivo.OpenReadStream();
+                    using var msTemp = new MemoryStream();
+                    await stream.CopyToAsync(msTemp);
+                    msTemp.Position = 0;
+
+                    using var reader = new PdfReader(msTemp);
+                    using var pdfDoc = new PdfDocument(reader);
+                    var form = PdfAcroForm.GetAcroForm(pdfDoc, false);
+
+                    if (form == null)
+                    {
+                        resultado.Errores.Add($"{archivo.FileName}: No se encontraron campos de formulario.");
+                        resultado.Fallidos++;
+                        continue;
+                    }
+
+                    var camposActivos = form.GetAllFormFields();
+                    if (camposActivos.Count == 0)
+                    {
+                        resultado.Errores.Add($"{archivo.FileName}: El PDF está aplanado y no puede reimportarse. Descarga una nueva versión.");
+                        resultado.Fallidos++;
+                        continue;
+                    }
+
+                    // ── Leer datos del publicador ─────────────────────────────
+                    var nombre = GetCampo(form, "900_1_Text_SanSerif");
+                    var fechaNacStr = GetCampo(form, "900_2_Text_SanSerif");
+                    var fechaBautStr = GetCampo(form, "900_5_Text_SanSerif");
+                    var anoServicioStr = GetCampo(form, "900_13_Text_C_SanSerif");
+
+                    if (string.IsNullOrWhiteSpace(nombre))
+                    {
+                        resultado.Errores.Add($"{archivo.FileName}: El campo Nombre está vacío.");
+                        resultado.Fallidos++;
+                        continue;
+                    }
+
+                    // ── Parsear fechas ────────────────────────────────────────
+                    DateTime? fechaNac = ParseFecha(fechaNacStr);
+                    DateTime? fechaBaut = ParseFecha(fechaBautStr);
+
+                    // ── Género ────────────────────────────────────────────────
+                    // Solo "Yes" es verdadero, vacío o "Off" es falso
+                    var esHombre = GetCheckbox(form, "900_3_CheckBox");
+                    var esMujer = GetCheckbox(form, "900_4_CheckBox");
+                    var genero = esMujer ? Genero.Mujer : Genero.Hombre;
+
+                    // ── Condición espiritual ──────────────────────────────────
+                    var esUngido = GetCheckbox(form, "900_7_CheckBox");
+                    var condicionEspiritual = esUngido
+                        ? CondicionEspiritual.Ungido
+                        : CondicionEspiritual.OtrasOvejas;
+
+                    // ── Tipo de publicador ────────────────────────────────────
+                    // Si no está marcado ninguno = Publicador
+                    var esPrecursorRegular = GetCheckbox(form, "900_10_CheckBox");
+                    var tipo = esPrecursorRegular
+                        ? TipoPublicador.PrecursorRegular
+                        : TipoPublicador.Publicador;
+
+                    // ── Rol ───────────────────────────────────────────────────
+                    var esAnciano = GetCheckbox(form, "900_8_CheckBox");
+                    var esSiervoMinisterial = GetCheckbox(form, "900_9_CheckBox");
+                    var rol = esAnciano
+                        ? RolCongregacion.Anciano
+                        : esSiervoMinisterial
+                            ? RolCongregacion.SiervoMinisterial
+                            : RolCongregacion.Ninguno;
+
+                    // ── Año de servicio ───────────────────────────────────────
+                    if (!int.TryParse(anoServicioStr?.Trim(), out int anoInicio))
+                    {
+                        var now = DateTime.Now;
+                        anoInicio = now.Month >= 9 ? now.Year : now.Year - 1;
+                    }
+                    int anoFin = anoInicio + 1;
+
+                    // ── Upsert publicador ─────────────────────────────────────
+                    var publicadorExistente = await _datPublicador.GetByNombreAsync(nombre.Trim());
+
+                    if (publicadorExistente != null)
+                    {
+                        publicadorExistente.FechaNacimiento = fechaNac ?? publicadorExistente.FechaNacimiento;
+                        publicadorExistente.FechaBautismo = fechaBaut ?? publicadorExistente.FechaBautismo;
+                        publicadorExistente.Genero = genero;
+                        publicadorExistente.CondicionEspiritual = condicionEspiritual;
+                        publicadorExistente.Tipo = tipo;
+                        publicadorExistente.Rol = rol;
+                        publicadorExistente.IdGrupo = idGrupo ?? publicadorExistente.IdGrupo;
+                        _datPublicador.Update(publicadorExistente);
+                        resultado.Actualizados.Add(nombre);
+                    }
+                    else
+                    {
+                        var nuevoPublicador = new Publicador
+                        {
+                            IdPublicador = Guid.NewGuid(),
+                            NombreCompleto = nombre.Trim(),
+                            FechaNacimiento = fechaNac,
+                            FechaBautismo = fechaBaut,
+                            Genero = genero,
+                            CondicionEspiritual = condicionEspiritual,
+                            Tipo = tipo,
+                            Rol = rol,
+                            IdGrupo = idGrupo,
+                            Activo = true,
+                            Inactivo = false,
+                            FechaCreacion = DateTime.Now
+                        };
+                        await _datPublicador.AddAsync(nuevoPublicador);
+                        publicadorExistente = nuevoPublicador;
+                        resultado.Creados.Add(nombre);
+                    }
+
+                    await _datPublicador.SaveChangesAsync();
+
+                    // ── Leer e importar informes mensuales ────────────────────
+                    // Sep=20, Oct=21, Nov=22, Dic=23, Ene=24, Feb=25
+                    // Mar=26, Abr=27, May=28, Jun=29, Jul=30, Ago=31
+                    var mesesConfig = new[]
+                    {
+                        (20, 9,  anoInicio),
+                        (21, 10, anoInicio),
+                        (22, 11, anoInicio),
+                        (23, 12, anoInicio),
+                        (24, 1,  anoFin),
+                        (25, 2,  anoFin),
+                        (26, 3,  anoFin),
+                        (27, 4,  anoFin),
+                        (28, 5,  anoFin),
+                        (29, 6,  anoFin),
+                        (30, 7,  anoFin),
+                        (31, 8,  anoFin)
+                    };
+
+                    var nuevosInformes = new List<InformeMensual>();
+
+                    foreach (var (numero, mes, ano) in mesesConfig)
+                    {
+                        var participo = GetCheckbox(form, $"901_{numero}_CheckBox");
+                        var precursorAux = GetCheckbox(form, $"903_{numero}_CheckBox");
+                        var cursosStr = GetCampo(form, $"902_{numero}_Text_C_SanSerif");
+                        var horasStr = GetCampo(form, $"904_{numero}_S21_Value");
+                        var notas = GetCampo(form, $"905_{numero}_Text_SanSerif");
+
+                        int.TryParse(cursosStr, out int cursos);
+                        int? horas = int.TryParse(horasStr, out int h) ? h : null;
+
+                        var tipoMes = precursorAux
+                            ? TipoPublicador.PrecursorAuxiliar
+                            : tipo;
+
+                        var (horasLimpias, cursosLimpios) = LimpiarCamposPorTipo(
+                            tipoMes, false, participo, horas, cursos);
+
+                        var existente = await _datInforme.GetByPublicadorMesAsync(
+                            publicadorExistente.IdPublicador, ano, mes);
+
+                        if (existente != null)
+                        {
+                            existente.Participo = participo;
+                            existente.CursosBiblicos = cursosLimpios;
+                            existente.Horas = horasLimpias;
+                            existente.Tipo = tipoMes;
+                            existente.Inactivo = false;
+                            existente.Observacion = string.IsNullOrWhiteSpace(notas) ? null : notas;
+                            _datInforme.Update(existente);
+                        }
+                        else if (participo || cursos > 0 || horas.HasValue)
+                        {
+                            nuevosInformes.Add(new InformeMensual
+                            {
+                                IdInformeMensual = Guid.NewGuid(),
+                                IdPublicador = publicadorExistente.IdPublicador,
+                                Ano = ano,
+                                Mes = mes,
+                                Participo = participo,
+                                CursosBiblicos = cursosLimpios,
+                                Horas = horasLimpias,
+                                Tipo = tipoMes,
+                                Inactivo = false,
+                                Observacion = string.IsNullOrWhiteSpace(notas) ? null : notas
+                            });
+                        }
+                    }
+
+                    if (nuevosInformes.Any())
+                        await _datInforme.AddRangeAsync(nuevosInformes);
+
+                    await _datInforme.SaveChangesAsync();
+                    resultado.Exitosos++;
+                }
+                catch (Exception ex)
+                {
+                    resultado.Errores.Add($"{archivo.FileName}: {ex.Message}");
+                    resultado.Fallidos++;
+                }
+            }
+
+            _logger.LogInformation("Importación tarjetas: {Exitosos} exitosos, {Fallidos} fallidos.",
+                resultado.Exitosos, resultado.Fallidos);
+
+            return ApiResponse<ResultadoImportacionTarjetasDto>.Ok(resultado, "Importación completada.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al importar tarjetas PDF.");
+            return ApiResponse<ResultadoImportacionTarjetasDto>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
     // ── Helpers privados ─────────────────────────────────────────────────────
 
     private static List<string> ValidarRol(TipoPublicador tipo, RolCongregacion rol)
     {
         var errores = new List<string>();
-
         if (tipo == TipoPublicador.NoBautizado && rol != RolCongregacion.Ninguno)
             errores.Add("Un publicador no bautizado no puede tener rol de Anciano o Siervo Ministerial.");
-
         return errores;
     }
 
@@ -342,30 +613,23 @@ public class BusPublicador : IBusPublicador
         using var pdfDoc = new PdfDocument(reader, writer);
         var form = PdfAcroForm.GetAcroForm(pdfDoc, false);
 
-        // ── Datos personales ──────────────────────────────────────────────
         SetCampo(form, "900_1_Text_SanSerif", tarjeta.NombreCompleto);
         SetCampo(form, "900_2_Text_SanSerif", tarjeta.FechaNacimiento?.ToString("dd/MM/yyyy") ?? string.Empty);
         SetCampo(form, "900_5_Text_SanSerif", tarjeta.FechaBautismo?.ToString("dd/MM/yyyy") ?? string.Empty);
         SetCampo(form, "900_13_Text_C_SanSerif", tarjeta.AnoServicioInicio.ToString());
 
-        // ── Género ────────────────────────────────────────────────────────
         SetCheckbox(form, "900_3_CheckBox", tarjeta.Genero == Genero.Hombre);
         SetCheckbox(form, "900_4_CheckBox", tarjeta.Genero == Genero.Mujer);
 
-        // ── Condición espiritual ──────────────────────────────────────────
         SetCheckbox(form, "900_6_CheckBox", tarjeta.CondicionEspiritual == CondicionEspiritual.OtrasOvejas);
         SetCheckbox(form, "900_7_CheckBox", tarjeta.CondicionEspiritual == CondicionEspiritual.Ungido);
 
-        // ── Rol en la congregación ────────────────────────────────────────
         SetCheckbox(form, "900_8_CheckBox", tarjeta.Rol == RolCongregacion.Anciano);
         SetCheckbox(form, "900_9_CheckBox", tarjeta.Rol == RolCongregacion.SiervoMinisterial);
         SetCheckbox(form, "900_10_CheckBox", tarjeta.Tipo == TipoPublicador.PrecursorRegular);
-        SetCheckbox(form, "900_11_CheckBox", false); // Precursor especial — no aplica
-        SetCheckbox(form, "900_12_CheckBox", false); // Misionero — no aplica
+        SetCheckbox(form, "900_11_CheckBox", false);
+        SetCheckbox(form, "900_12_CheckBox", false);
 
-        // ── Datos por mes ─────────────────────────────────────────────────
-        // Sep=20, Oct=21, Nov=22, Dic=23, Ene=24, Feb=25
-        // Mar=26, Abr=27, May=28, Jun=29, Jul=30, Ago=31
         for (int i = 0; i < tarjeta.Meses.Count && i < 12; i++)
         {
             var mes = tarjeta.Meses[i];
@@ -373,24 +637,18 @@ public class BusPublicador : IBusPublicador
 
             SetCheckbox(form, $"901_{numero}_CheckBox", mes.Participo);
             SetCampo(form, $"902_{numero}_Text_C_SanSerif", mes.Participo && mes.CursosBiblicos > 0
-                ? mes.CursosBiblicos.ToString()
-                : string.Empty);
+                ? mes.CursosBiblicos.ToString() : string.Empty);
             SetCheckbox(form, $"903_{numero}_CheckBox", mes.PrecursorAuxiliar);
             SetCampo(form, $"904_{numero}_S21_Value", mes.Horas.HasValue
-                ? mes.Horas.Value.ToString()
-                : string.Empty);
+                ? mes.Horas.Value.ToString() : string.Empty);
             SetCampo(form, $"905_{numero}_Text_SanSerif", mes.Notas ?? string.Empty);
         }
 
-        // ── Totales ───────────────────────────────────────────────────────
         int totalHoras = tarjeta.Meses.Sum(m => m.Horas ?? 0);
         int totalCursos = tarjeta.Meses.Sum(m => m.CursosBiblicos);
 
         SetCampo(form, "904_32_S21_Value", totalHoras > 0 ? totalHoras.ToString() : string.Empty);
         SetCampo(form, "905_32_Text_SanSerif", totalCursos > 0 ? totalCursos.ToString() : string.Empty);
-
-        // Aplanar: PDF no editable al descargar
-        form.FlattenFields();
 
         pdfDoc.Close();
         return ms.ToArray();
@@ -408,5 +666,38 @@ public class BusPublicador : IBusPublicador
         var campo = form.GetField(nombre);
         if (campo == null) return;
         campo.SetValue(marcado ? "Yes" : "Off");
+    }
+
+    private static string GetCampo(PdfAcroForm form, string nombre)
+    {
+        var campo = form.GetField(nombre);
+        return campo?.GetValueAsString() ?? string.Empty;
+    }
+
+    private static bool GetCheckbox(PdfAcroForm form, string nombre)
+    {
+        var campo = form.GetField(nombre);
+        if (campo == null) return false;
+        // Solo "Yes" es verdadero — vacío o "Off" es falso
+        return campo.GetValueAsString()?.Trim().ToLower() == "yes";
+    }
+
+    private static DateTime? ParseFecha(string? valor)
+    {
+        if (string.IsNullOrWhiteSpace(valor)) return null;
+        return DateTime.TryParseExact(valor.Trim(), "dd/MM/yyyy",
+            System.Globalization.CultureInfo.InvariantCulture,
+            System.Globalization.DateTimeStyles.None, out var fecha)
+            ? fecha
+            : null;
+    }
+
+    private static (int? horas, int cursos) LimpiarCamposPorTipo(
+        TipoPublicador tipo, bool inactivo, bool participo, int? horas, int cursos)
+    {
+        if (inactivo || !participo) return (null, 0);
+        if (tipo == TipoPublicador.Publicador || tipo == TipoPublicador.NoBautizado)
+            return (null, cursos);
+        return (horas, cursos);
     }
 }
