@@ -47,3 +47,8 @@ public class FiltroAsistenciaDto
     public int Pagina { get; set; } = 1;
     public int TamanoPagina { get; set; } = 20;
 }
+
+public class TarjetaReunionesDto
+{
+    public int AnoServicio { get; set; }
+}

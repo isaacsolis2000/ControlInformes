@@ -59,4 +59,12 @@ public class DatAsistencia : IDatAsistencia
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
         => await _context.SaveChangesAsync(cancellationToken);
+
+    public async Task<List<Asistencia>> GetByMesYTipoAsync(int ano, int mes, TipoReunion tipoReunion)
+    => await _context.Asistencias
+        .Where(a => a.FechaReunion.Year == ano
+                 && a.FechaReunion.Month == mes
+                 && a.TipoReunion == tipoReunion)
+        .OrderBy(a => a.FechaReunion)
+        .ToListAsync();
 }

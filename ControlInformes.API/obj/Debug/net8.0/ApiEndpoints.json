@@ -53,6 +53,22 @@
   },
   {
     "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "Actualizar",
+    "RelativePath": "api/asistencia",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ControlInformes.Business.DTOs.ActualizarAsistenciaDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
     "Method": "GetById",
     "RelativePath": "api/asistencia/{id}",
     "HttpMethod": "GET",
@@ -62,27 +78,6 @@
       {
         "Name": "id",
         "Type": "System.Guid",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
-    "Method": "Actualizar",
-    "RelativePath": "api/asistencia/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Guid",
-        "IsRequired": true
-      },
-      {
-        "Name": "dto",
-        "Type": "ControlInformes.Business.DTOs.ActualizarAsistenciaDto",
         "IsRequired": true
       }
     ],
@@ -116,6 +111,22 @@
         "Name": "dto",
         "Type": "ControlInformes.Business.DTOs.RegistrarFechaDto",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "DescargarTarjetaReuniones",
+    "RelativePath": "api/asistencia/tarjeta/pdf",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "anoServicio",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

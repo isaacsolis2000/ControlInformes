@@ -193,3 +193,4 @@ D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\refint
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ControlInformes.API.pdb
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ControlInformes.API.genruntimeconfig.cache
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ref\ControlInformes.API.dll
+D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\Template\Templete_Tarjeta_Reuniones.pdf

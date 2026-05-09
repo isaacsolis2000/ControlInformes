@@ -121,6 +121,7 @@ public class InformeExcelRowDto
     public int Cursos { get; set; }
     public bool Inactivo { get; set; }
     public string? Observacion { get; set; }
+    public string? IdPublicador { get; set; }
 }
 
 // Resultado importación

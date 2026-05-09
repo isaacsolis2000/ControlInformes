@@ -121,7 +121,10 @@ public class BusInformeMensual : IBusInformeMensual
             {
                 Ano = ano,
                 Mes = mes,
-                TotalPublicadores = publicadoresActivos.Count,
+                TotalPublicadores = informesActivos
+                    .Select(i => i.IdPublicador)
+                    .Distinct()
+                    .Count(),
                 PromedioAsistenciaReuniones = Math.Round(promedioReuniones, 1),
                 Publicadores = new ResumenTipoDto
                 {
@@ -287,7 +290,7 @@ public class BusInformeMensual : IBusInformeMensual
     {
         try
         {
-            var grupo = await _datGrupo.GetByIdAsync(meta.IdGrupo); // Solo necesitas verificar que existe
+            var grupo = await _datGrupo.GetByIdAsync(meta.IdGrupo);
             if (grupo == null)
                 return ApiResponse<ResultadoImportacionDto>.NotFound(
                     $"Grupo con Id ({meta.IdGrupo}) no encontrado.", ErrorCatalog.EntidadNoEncontrada);
@@ -301,21 +304,58 @@ public class BusInformeMensual : IBusInformeMensual
 
             var filas = LeerExcel(workbook);
             var resultado = new ResultadoImportacionDto();
-            var todosPublicadores = await _datPublicador.GetAllAsync(); // ← una sola consulta
+            var todosPublicadores = await _datPublicador.GetAllAsync();
             var filasValidas = new List<(Publicador publicador, InformeExcelRowDto fila, TipoPublicador tipo)>();
+            var publicadoresNuevos = new List<Publicador>(); // ← nuevos a crear
 
             // ── FASE 1: Validar todo ─────────────────────────────────────────
             foreach (var fila in filas)
             {
-                // Buscar en TODOS los publicadores, no solo del grupo
-                var publicador = todosPublicadores
-                    .FirstOrDefault(p => NormalizarTexto(p.NombreCompleto) == NormalizarTexto(fila.Nombre));
+                Publicador? publicador = null;
 
+                // Intentar buscar por ID primero (columna 8)
+                if (Guid.TryParse(fila.IdPublicador, out var idPublicador))
+                {
+                    publicador = todosPublicadores.FirstOrDefault(p => p.IdPublicador == idPublicador);
+                }
+
+                // Si no tiene ID (fila agregada manualmente), buscar por nombre
+                if (publicador == null && !string.IsNullOrWhiteSpace(fila.Nombre))
+                {
+                    publicador = todosPublicadores
+                        .FirstOrDefault(p => NormalizarTexto(p.NombreCompleto) == NormalizarTexto(fila.Nombre));
+                }
+
+                // Si tampoco existe por nombre → crear nuevo publicador
                 if (publicador == null)
                 {
-                    resultado.Errores.Add($"'{fila.Nombre}' no encontrado.");
-                    resultado.Fallidos++;
-                    continue;
+                    if (string.IsNullOrWhiteSpace(fila.Nombre))
+                    {
+                        resultado.Errores.Add($"Fila sin nombre no puede ser procesada.");
+                        resultado.Fallidos++;
+                        continue;
+                    }
+
+                    if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipoNuevo))
+                    {
+                        resultado.Errores.Add($"Tipo '{fila.Tipo}' no válido para '{fila.Nombre}'.");
+                        resultado.Fallidos++;
+                        continue;
+                    }
+
+                    publicador = new Publicador
+                    {
+                        IdPublicador = Guid.NewGuid(),
+                        NombreCompleto = fila.Nombre.Trim(),
+                        Tipo = tipoNuevo,
+                        IdGrupo = meta.IdGrupo,
+                        Activo = true,
+                        Inactivo = false,
+                        FechaCreacion = DateTime.UtcNow
+                    };
+
+                    publicadoresNuevos.Add(publicador);
+                    todosPublicadores.Add(publicador); // evitar duplicados en la misma importación
                 }
 
                 if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipoParseado))
@@ -346,7 +386,18 @@ public class BusInformeMensual : IBusInformeMensual
                     $"Importación cancelada: {resultado.Fallidos} error(es). Corrija el archivo e intente de nuevo.");
             }
 
-            // ── FASE 3: Todo válido, guardar ─────────────────────────────────
+            // ── FASE 3: Crear publicadores nuevos primero ────────────────────
+            if (publicadoresNuevos.Any())
+            {
+                // DESPUÉS
+                foreach (var nuevo in publicadoresNuevos)
+                    await _datPublicador.AddAsync(nuevo);
+
+                await _datPublicador.SaveChangesAsync(CancellationToken.None);
+                _logger.LogInformation("Importación Excel: {Count} publicador(es) nuevo(s) creado(s).", publicadoresNuevos.Count);
+            }
+
+            // ── FASE 4: Guardar informes ─────────────────────────────────────
             var nuevos = new List<InformeMensual>();
 
             foreach (var (publicador, fila, tipo) in filasValidas)
@@ -387,8 +438,12 @@ public class BusInformeMensual : IBusInformeMensual
 
             await _datInforme.SaveChangesAsync();
 
+            var msgNuevos = publicadoresNuevos.Any()
+                ? $" ({publicadoresNuevos.Count} publicador(es) nuevo(s) registrado(s))"
+                : string.Empty;
+
             _logger.LogInformation("Importación Excel: {Exitosos} exitosos.", resultado.Exitosos);
-            return ApiResponse<ResultadoImportacionDto>.Ok(resultado, "Importación completada.");
+            return ApiResponse<ResultadoImportacionDto>.Ok(resultado, $"Importación completada{msgNuevos}.");
         }
         catch (Exception ex)
         {
@@ -498,7 +553,8 @@ public class BusInformeMensual : IBusInformeMensual
                 Horas = row.Cell(4).IsEmpty() ? null : (int?)Convert.ToInt32(row.Cell(4).GetDouble()),
                 Cursos = row.Cell(5).IsEmpty() ? 0 : Convert.ToInt32(row.Cell(5).GetDouble()),
                 Inactivo = ParseBool(row.Cell(6).GetString()),
-                Observacion = row.Cell(7).IsEmpty() ? null : row.Cell(7).GetString().Trim()
+                Observacion = row.Cell(7).IsEmpty() ? null : row.Cell(7).GetString().Trim(),
+                IdPublicador = row.Cell(8).GetString().Trim()
             });
         }
 
@@ -524,6 +580,7 @@ public class BusInformeMensual : IBusInformeMensual
         ws.Cell(1, 5).Value = "Cursos";
         ws.Cell(1, 6).Value = "Inactivo";
         ws.Cell(1, 7).Value = "Observación";
+        ws.Cell(1, 8).Value = "IdPublicador"; // ← oculta
 
         var header = ws.Range(1, 1, 1, 7);
         header.Style.Font.Bold = true;
@@ -532,8 +589,17 @@ public class BusInformeMensual : IBusInformeMensual
         header.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
 
         // ── Publicadores del grupo ────────────────────────────────────────────
+        var orden = new Dictionary<TipoPublicador, int>
+    {
+        { TipoPublicador.Publicador,        0 },
+        { TipoPublicador.PrecursorAuxiliar, 1 },
+        { TipoPublicador.PrecursorRegular,  2 },
+        { TipoPublicador.NoBautizado,       3 }
+    };
+
         var publicadores = grupo.Publicadores
-            .OrderBy(p => p.NombreCompleto)
+            .OrderBy(p => orden.GetValueOrDefault(p.Tipo, 99))
+            .ThenBy(p => p.NombreCompleto)
             .ToList();
 
         for (int i = 0; i < publicadores.Count; i++)
@@ -542,8 +608,9 @@ public class BusInformeMensual : IBusInformeMensual
             var pub = publicadores[i];
             ws.Cell(fila, 1).SetValue(pub.NombreCompleto);
             ws.Cell(fila, 2).SetValue(pub.Tipo.ToString());
-            ws.Cell(fila, 3).SetValue("No");
+            ws.Cell(fila, 3).SetValue("Sí");
             ws.Cell(fila, 6).SetValue("No");
+            ws.Cell(fila, 8).SetValue(pub.IdPublicador.ToString()); // ← ID oculto
         }
 
         // ── Validaciones ──────────────────────────────────────────────────────
@@ -579,6 +646,7 @@ public class BusInformeMensual : IBusInformeMensual
 
         // ── Protección y ancho ────────────────────────────────────────────────
         ws.Column(1).Style.Protection.Locked = true;
+        ws.Column(8).Style.Protection.Locked = true; // ← proteger ID
         ws.Columns(2, 7).Style.Protection.Locked = false;
 
         ws.Column(1).Width = 35;
@@ -588,6 +656,7 @@ public class BusInformeMensual : IBusInformeMensual
         ws.Column(5).Width = 10;
         ws.Column(6).Width = 12;
         ws.Column(7).Width = 30;
+        ws.Column(8).Hide(); // ← ocultar
 
         ws.SheetView.FreezeRows(1);
 

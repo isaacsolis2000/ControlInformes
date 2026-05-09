@@ -22,6 +22,11 @@
 		    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	    </None>
     </ItemGroup>
+	<ItemGroup>
+		<None Update="Template\Templete_Tarjeta_Reuniones.pdf">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ControlInformes.Domain\ControlInformes.Domain.csproj" />
     <ProjectReference Include="..\ControlInformes.Utils\ControlInformes.Utils.csproj" />

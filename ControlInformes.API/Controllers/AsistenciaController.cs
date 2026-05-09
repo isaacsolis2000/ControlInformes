@@ -22,7 +22,6 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    // ✅ Rutas fijas ANTES de {id:guid}
     [HttpPost("fecha")]
     public async Task<IActionResult> RegistrarFecha([FromBody] RegistrarFechaDto dto)
     {
@@ -30,7 +29,6 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    // ✅ Rutas con parámetro DESPUÉS
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -45,11 +43,9 @@ public class AsistenciaController : ControllerBase
         return StatusCode(response.HttpCode, response);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Actualizar(Guid id, [FromBody] ActualizarAsistenciaDto dto)
+    [HttpPut]
+    public async Task<IActionResult> Actualizar([FromBody] ActualizarAsistenciaDto dto)
     {
-        if (id != dto.IdAsistencia)
-            return BadRequest(new { HasError = true, Mensaje = "El ID no coincide." });
 
         var response = await _busAsistencia.ActualizarAsync(dto);
         return StatusCode(response.HttpCode, response);
@@ -60,5 +56,18 @@ public class AsistenciaController : ControllerBase
     {
         var response = await _busAsistencia.EliminarAsync(id);
         return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpGet("tarjeta/pdf")]
+    public async Task<IActionResult> DescargarTarjetaReuniones([FromQuery] int anoServicio)
+    {
+        var response = await _busAsistencia.DescargarTarjetaReunionesAsync(anoServicio);
+        if (response.HasError)
+            return StatusCode(response.HttpCode, response);
+
+        return File(
+            response.Result!,
+            "application/pdf",
+            $"tarjeta_reuniones_{anoServicio}-{anoServicio + 1}.pdf");
     }
 }
