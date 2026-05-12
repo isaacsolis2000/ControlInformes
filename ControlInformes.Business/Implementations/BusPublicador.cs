@@ -700,4 +700,127 @@ public class BusPublicador : IBusPublicador
             return (null, cursos);
         return (horas, cursos);
     }
+
+    public async Task<ApiResponse<byte[]>> DescargarTarjetaResumenAsync(int anoServicio, TipoResumenPublicador tipo)
+    {
+        try
+        {
+            if (!File.Exists(Path.Combine(AppContext.BaseDirectory, "Template", "Template_Tarjeta_Publicador.pdf")))
+                return ApiResponse<byte[]>.Error(
+                    "Template de tarjeta no encontrado.", ErrorCatalog.ArchivoInvalido);
+
+            // ── Nombre en el PDF ──────────────────────────────────────────────
+            var nombreCongregacion = "CIPRESES";
+            var nombreTipo = tipo switch
+            {
+                TipoResumenPublicador.Publicador => "PUBLICADORES",
+                TipoResumenPublicador.PrecursorAuxiliar => "PRECURSORES AUXILIARES",
+                TipoResumenPublicador.PrecursorRegular => "PRECURSORES REGULARES",
+                _ => "PUBLICADORES"
+            };
+            var nombrePdf = $"{nombreTipo} {nombreCongregacion} {anoServicio}";
+
+            // ── Tipos a incluir en la consulta ────────────────────────────────
+            var tiposAIncluir = tipo switch
+            {
+                TipoResumenPublicador.Publicador => new[] { TipoPublicador.Publicador, TipoPublicador.NoBautizado },
+                TipoResumenPublicador.PrecursorAuxiliar => new[] { TipoPublicador.PrecursorAuxiliar },
+                TipoResumenPublicador.PrecursorRegular => new[] { TipoPublicador.PrecursorRegular },
+                _ => new[] { TipoPublicador.Publicador, TipoPublicador.NoBautizado }
+            };
+
+            // ── Año de servicio ───────────────────────────────────────────────
+            // anoServicio=2026 → Sep 2025 → Ago 2026
+            int anoInicio = anoServicio - 1; // Sep-Dic: 2025
+            int anoFin = anoServicio;     // Ene-Ago: 2026
+
+            var mesesConfig = new[]
+            {
+            (IndiceForm: 20, Mes: 9,  Ano: anoInicio), // Sep 2025
+            (IndiceForm: 21, Mes: 10, Ano: anoInicio), // Oct 2025
+            (IndiceForm: 22, Mes: 11, Ano: anoInicio), // Nov 2025
+            (IndiceForm: 23, Mes: 12, Ano: anoInicio), // Dic 2025
+            (IndiceForm: 24, Mes: 1,  Ano: anoFin),    // Ene 2026
+            (IndiceForm: 25, Mes: 2,  Ano: anoFin),    // Feb 2026
+            (IndiceForm: 26, Mes: 3,  Ano: anoFin),    // Mar 2026
+            (IndiceForm: 27, Mes: 4,  Ano: anoFin),    // Abr 2026
+            (IndiceForm: 28, Mes: 5,  Ano: anoFin),    // May 2026
+            (IndiceForm: 29, Mes: 6,  Ano: anoFin),    // Jun 2026
+            (IndiceForm: 30, Mes: 7,  Ano: anoFin),    // Jul 2026
+            (IndiceForm: 31, Mes: 8,  Ano: anoFin)     // Ago 2026
+        };
+
+            using var ms = new MemoryStream();
+            using var reader = new PdfReader(
+                Path.Combine(AppContext.BaseDirectory, "Template", "Template_Tarjeta_Publicador.pdf"));
+            using var writer = new PdfWriter(ms);
+            using var pdfDoc = new PdfDocument(reader, writer);
+            var form = PdfAcroForm.GetAcroForm(pdfDoc, false);
+
+            // ── Encabezado ────────────────────────────────────────────────────
+            SetCampo(form, "900_1_Text_SanSerif", nombrePdf);
+            SetCampo(form, "900_13_Text_C_SanSerif", anoServicio.ToString());
+
+            SetCheckbox(form, "900_10_CheckBox", tipo == TipoResumenPublicador.PrecursorRegular);
+            SetCheckbox(form, "900_3_CheckBox", false);
+            SetCheckbox(form, "900_4_CheckBox", false);
+            SetCheckbox(form, "900_6_CheckBox", false);
+            SetCheckbox(form, "900_7_CheckBox", false);
+            SetCheckbox(form, "900_8_CheckBox", false);
+            SetCheckbox(form, "900_9_CheckBox", false);
+            SetCheckbox(form, "900_11_CheckBox", false);
+            SetCheckbox(form, "900_12_CheckBox", false);
+
+            int totalCursosAnual = 0;
+            int totalHorasAnual = 0;
+
+            // ── Datos por mes ─────────────────────────────────────────────────
+            foreach (var (indiceForm, mes, ano) in mesesConfig)
+            {
+                var informesMes = await _datInforme.GetByMesAsync(ano, mes);
+
+                var informesFiltrados = informesMes
+                    .Where(i => tiposAIncluir.Contains(i.Tipo) && !i.Inactivo)
+                    .ToList();
+
+                if (!informesFiltrados.Any()) continue;
+
+                int cantidadParticiparon = informesFiltrados
+                    .Where(i => i.Participo)
+                    .Select(i => i.IdPublicador)
+                    .Distinct()
+                    .Count();
+
+                int cursosMes = informesFiltrados.Sum(i => i.CursosBiblicos);
+                int horasMes = informesFiltrados.Sum(i => i.Horas ?? 0);
+
+                totalCursosAnual += cursosMes;
+                totalHorasAnual += horasMes;
+
+                bool participo = cantidadParticiparon > 0;
+
+                SetCheckbox(form, $"901_{indiceForm}_CheckBox", participo);
+                SetCampo(form, $"902_{indiceForm}_Text_C_SanSerif", cursosMes > 0 ? cursosMes.ToString() : string.Empty);
+                SetCampo(form, $"904_{indiceForm}_S21_Value", horasMes > 0 ? horasMes.ToString() : string.Empty);
+                SetCampo(form, $"905_{indiceForm}_Text_SanSerif", string.Empty); // ← notas vacío
+                SetCheckbox(form, $"903_{indiceForm}_CheckBox", false);
+            }
+
+            // ── Totales ───────────────────────────────────────────────────────
+            // 904_32 = Total Horas
+            // 905_32 = Total Notas (vacío)
+            // El total de cursos va en 902_32 si existe, si no queda en horas
+            SetCampo(form, "904_32_S21_Value", totalHorasAnual > 0 ? totalHorasAnual.ToString() : string.Empty);
+            SetCampo(form, "905_32_Text_SanSerif", string.Empty); // ← notas total vacío
+
+            pdfDoc.Close();
+            return ApiResponse<byte[]>.Ok(ms.ToArray(), "Tarjeta resumen generada.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al generar tarjeta resumen: {AnoServicio} - {Tipo}.", anoServicio, tipo);
+            return ApiResponse<byte[]>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
 }

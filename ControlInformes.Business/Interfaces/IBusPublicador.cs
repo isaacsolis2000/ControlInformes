@@ -1,4 +1,5 @@
 using ControlInformes.Business.DTOs;
+using ControlInformes.Domain.Enums;
 using ControlInformes.Utils;
 using Microsoft.AspNetCore.Http;
 
@@ -19,4 +20,5 @@ public interface IBusPublicador
     Task<ApiResponse<byte[]>> DescargarTarjetasPorGrupoAsync(Guid idGrupo, int? anoServicio); // mismo nombre, devuelve zip
     Task<ApiResponse<ResultadoImportacionTarjetasDto>> ImportarTarjetasAsync(
     List<IFormFile> archivos, Guid? idGrupo);
+    Task<ApiResponse<byte[]>> DescargarTarjetaResumenAsync(int anoServicio, TipoResumenPublicador tipo);
 }

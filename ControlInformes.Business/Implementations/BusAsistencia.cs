@@ -226,7 +226,7 @@ public class BusAsistencia : IBusAsistencia
         return errores;
     }
 
-    public async Task<ApiResponse<byte[]>> DescargarTarjetaReunionesAsync(int anoServicio)
+    public async Task<ApiResponse<byte[]>> DescargarTarjetaReunionesAsync(int anoServicio1, int anoServicio2)
     {
         try
         {
@@ -237,15 +237,15 @@ public class BusAsistencia : IBusAsistencia
                 return ApiResponse<byte[]>.Error(
                     "Template de tarjeta de reuniones no encontrado.", ErrorCatalog.ArchivoInvalido);
 
-            // ── Definición de años ────────────────────────────────────────────
-            // anoServicio=2026:
-            //   Columna izquierda (2026): Sep 2025 → Ago 2026
-            //   Columna derecha   (2027): Sep 2026 → Ago 2027
+            // ── Año 1 (columna izquierda) ─────────────────────────────────────
+            // anoServicio1=2025 → Sep 2024 → Ago 2025
+            int ano1Inicio = anoServicio1 - 1; // Sep-Dic: 2024
+            int ano1Fin = anoServicio1;     // Ene-Ago: 2025
 
-            int ano1Inicio = anoServicio - 1; // Sep-Dic izquierda: 2025
-            int ano1Fin = anoServicio;     // Ene-Ago izquierda: 2026
-            int ano2Inicio = anoServicio;     // Sep-Dic derecha:   2026
-            int ano2Fin = anoServicio + 1; // Ene-Ago derecha:   2027
+            // ── Año 2 (columna derecha) ───────────────────────────────────────
+            // anoServicio2=2026 → Sep 2025 → Ago 2026
+            int ano2Inicio = anoServicio2 - 1; // Sep-Dic: 2025
+            int ano2Fin = anoServicio2;     // Ene-Ago: 2026
 
             using var ms = new MemoryStream();
             using var reader = new PdfReader(rutaTemplate);
@@ -254,46 +254,43 @@ public class BusAsistencia : IBusAsistencia
             var form = PdfAcroForm.GetAcroForm(pdfDoc, false);
 
             // ── Encabezado ────────────────────────────────────────────────────
-            // El PDF muestra el año de servicio (el que termina)
-            // Izquierda = anoServicio (2026), Derecha = anoServicio+1 (2027)
-            SetCampo(form, "Service Year_1", anoServicio.ToString());       // ES izq: 2026
-            SetCampo(form, "Service Year_2", (anoServicio + 1).ToString()); // ES der: 2027
-            SetCampo(form, "Service Year_3", anoServicio.ToString());       // FS izq: 2026
-            SetCampo(form, "Service Year_4", (anoServicio + 1).ToString()); // FS der: 2027
+            SetCampo(form, "Service Year_1", anoServicio1.ToString()); // ES izq: 2025
+            SetCampo(form, "Service Year_2", anoServicio2.ToString()); // ES der: 2026
+            SetCampo(form, "Service Year_3", anoServicio1.ToString()); // FS izq: 2025
+            SetCampo(form, "Service Year_4", anoServicio2.ToString()); // FS der: 2026
 
-            // ── Configuración de meses ────────────────────────────────────────
-            // Año 1 (izquierda): Sep 2025 → Ago 2026
+            // ── Meses año 1 (izquierda) ───────────────────────────────────────
             var mesesAno1 = new[]
             {
-            (Indice: 1,  Mes: 9,  Ano: ano1Inicio), // Sep 2025
-            (Indice: 2,  Mes: 10, Ano: ano1Inicio), // Oct 2025
-            (Indice: 3,  Mes: 11, Ano: ano1Inicio), // Nov 2025
-            (Indice: 4,  Mes: 12, Ano: ano1Inicio), // Dic 2025
-            (Indice: 5,  Mes: 1,  Ano: ano1Fin),    // Ene 2026
-            (Indice: 6,  Mes: 2,  Ano: ano1Fin),    // Feb 2026
-            (Indice: 7,  Mes: 3,  Ano: ano1Fin),    // Mar 2026
-            (Indice: 8,  Mes: 4,  Ano: ano1Fin),    // Abr 2026
-            (Indice: 9,  Mes: 5,  Ano: ano1Fin),    // May 2026
-            (Indice: 10, Mes: 6,  Ano: ano1Fin),    // Jun 2026
-            (Indice: 11, Mes: 7,  Ano: ano1Fin),    // Jul 2026
-            (Indice: 12, Mes: 8,  Ano: ano1Fin)     // Ago 2026
+            (Indice: 1,  Mes: 9,  Ano: ano1Inicio),
+            (Indice: 2,  Mes: 10, Ano: ano1Inicio),
+            (Indice: 3,  Mes: 11, Ano: ano1Inicio),
+            (Indice: 4,  Mes: 12, Ano: ano1Inicio),
+            (Indice: 5,  Mes: 1,  Ano: ano1Fin),
+            (Indice: 6,  Mes: 2,  Ano: ano1Fin),
+            (Indice: 7,  Mes: 3,  Ano: ano1Fin),
+            (Indice: 8,  Mes: 4,  Ano: ano1Fin),
+            (Indice: 9,  Mes: 5,  Ano: ano1Fin),
+            (Indice: 10, Mes: 6,  Ano: ano1Fin),
+            (Indice: 11, Mes: 7,  Ano: ano1Fin),
+            (Indice: 12, Mes: 8,  Ano: ano1Fin)
         };
 
-            // Año 2 (derecha): Sep 2026 → Ago 2027
+            // ── Meses año 2 (derecha) ─────────────────────────────────────────
             var mesesAno2 = new[]
             {
-            (Indice: 1,  Mes: 9,  Ano: ano2Inicio), // Sep 2026
-            (Indice: 2,  Mes: 10, Ano: ano2Inicio), // Oct 2026
-            (Indice: 3,  Mes: 11, Ano: ano2Inicio), // Nov 2026
-            (Indice: 4,  Mes: 12, Ano: ano2Inicio), // Dic 2026
-            (Indice: 5,  Mes: 1,  Ano: ano2Fin),    // Ene 2027
-            (Indice: 6,  Mes: 2,  Ano: ano2Fin),    // Feb 2027
-            (Indice: 7,  Mes: 3,  Ano: ano2Fin),    // Mar 2027
-            (Indice: 8,  Mes: 4,  Ano: ano2Fin),    // Abr 2027
-            (Indice: 9,  Mes: 5,  Ano: ano2Fin),    // May 2027
-            (Indice: 10, Mes: 6,  Ano: ano2Fin),    // Jun 2027
-            (Indice: 11, Mes: 7,  Ano: ano2Fin),    // Jul 2027
-            (Indice: 12, Mes: 8,  Ano: ano2Fin)     // Ago 2027
+            (Indice: 1,  Mes: 9,  Ano: ano2Inicio),
+            (Indice: 2,  Mes: 10, Ano: ano2Inicio),
+            (Indice: 3,  Mes: 11, Ano: ano2Inicio),
+            (Indice: 4,  Mes: 12, Ano: ano2Inicio),
+            (Indice: 5,  Mes: 1,  Ano: ano2Fin),
+            (Indice: 6,  Mes: 2,  Ano: ano2Fin),
+            (Indice: 7,  Mes: 3,  Ano: ano2Fin),
+            (Indice: 8,  Mes: 4,  Ano: ano2Fin),
+            (Indice: 9,  Mes: 5,  Ano: ano2Fin),
+            (Indice: 10, Mes: 6,  Ano: ano2Fin),
+            (Indice: 11, Mes: 7,  Ano: ano2Fin),
+            (Indice: 12, Mes: 8,  Ano: ano2Fin)
         };
 
             double totalES1 = 0, totalFS1 = 0;
@@ -304,7 +301,6 @@ public class BusAsistencia : IBusAsistencia
             // ── Año 1: bloques 1=EntreSemana, 3=FinSemana ────────────────────
             foreach (var (indice, mes, ano) in mesesAno1)
             {
-                // Entre semana
                 var es = await _datAsistencia.GetByMesYTipoAsync(ano, mes, TipoReunion.EntreSemana);
                 int numES = es.Count;
                 int sumES = es.Sum(r => r.Total);
@@ -315,7 +311,6 @@ public class BusAsistencia : IBusAsistencia
                 SetCampo(form, $"1-Average_{indice}", pES > 0 ? pES.ToString("F1") : string.Empty);
                 if (numES > 0) { totalES1 += pES; cntES1++; }
 
-                // Fin de semana
                 var fs = await _datAsistencia.GetByMesYTipoAsync(ano, mes, TipoReunion.Publica);
                 int numFS = fs.Count;
                 int sumFS = fs.Sum(r => r.Total);
@@ -330,7 +325,6 @@ public class BusAsistencia : IBusAsistencia
             // ── Año 2: bloques 2=EntreSemana, 4=FinSemana ────────────────────
             foreach (var (indice, mes, ano) in mesesAno2)
             {
-                // Entre semana
                 var es = await _datAsistencia.GetByMesYTipoAsync(ano, mes, TipoReunion.EntreSemana);
                 int numES = es.Count;
                 int sumES = es.Sum(r => r.Total);
@@ -341,7 +335,6 @@ public class BusAsistencia : IBusAsistencia
                 SetCampo(form, $"2-Average_{indice}", pES > 0 ? pES.ToString("F1") : string.Empty);
                 if (numES > 0) { totalES2 += pES; cntES2++; }
 
-                // Fin de semana
                 var fs = await _datAsistencia.GetByMesYTipoAsync(ano, mes, TipoReunion.Publica);
                 int numFS = fs.Count;
                 int sumFS = fs.Sum(r => r.Total);
@@ -368,7 +361,7 @@ public class BusAsistencia : IBusAsistencia
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error al generar tarjeta de reuniones: {AnoServicio}.", anoServicio);
+            _logger.LogError(ex, "Error al generar tarjeta de reuniones.");
             return ApiResponse<byte[]>.Error(
                 ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
         }

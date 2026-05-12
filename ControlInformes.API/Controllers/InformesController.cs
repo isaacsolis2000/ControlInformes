@@ -1,9 +1,11 @@
 ﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlInformes.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/informes")]
 public class InformesController : ControllerBase

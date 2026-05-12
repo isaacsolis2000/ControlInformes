@@ -87,36 +87,66 @@ public class BusInformeMensual : IBusInformeMensual
             var grupos = await _datGrupo.GetAllAsync();
             var publicadoresActivos = await _datPublicador.GetActivosAsync();
 
-            // Reuniones del mes
+            // ── Reuniones separadas por tipo ──────────────────────────────────
             var (reuniones, _) = await _datAsistencia.GetPaginadoAsync(ano, mes, null, 1, 100);
-            var promedioReuniones = reuniones.Any() ? reuniones.Average(r => r.Total) : 0;
 
-            // Excluir inactivos para conteos
+            var reunionesES = reuniones
+                .Where(r => r.TipoReunion == TipoReunion.EntreSemana).ToList();
+            var reunionesFS = reuniones
+                .Where(r => r.TipoReunion == TipoReunion.Publica).ToList();
+
+            var promedioES = reunionesES.Any()
+                ? Math.Round(reunionesES.Average(r => r.Total), 1) : 0;
+            var promedioFS = reunionesFS.Any()
+                ? Math.Round(reunionesFS.Average(r => r.Total), 1) : 0;
+
+            // ── Informes ──────────────────────────────────────────────────────
             var informesActivos = informes.Where(i => !i.Inactivo).ToList();
 
             var infoPublicadores = informesActivos
                 .Where(i => i.Tipo == TipoPublicador.Publicador || i.Tipo == TipoPublicador.NoBautizado)
                 .ToList();
-
             var infoAuxiliares = informesActivos
-                .Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar)
-                .ToList();
-
+                .Where(i => i.Tipo == TipoPublicador.PrecursorAuxiliar).ToList();
             var infoRegulares = informesActivos
-                .Where(i => i.Tipo == TipoPublicador.PrecursorRegular)
-                .ToList();
+                .Where(i => i.Tipo == TipoPublicador.PrecursorRegular).ToList();
 
-            // Pendientes
+            // ── Grupos sin informe ────────────────────────────────────────────
             var gruposSinInforme = grupos
                 .Where(g => !informes.Any(i => i.Publicador.IdGrupo == g.IdGrupo))
                 .Select(g => g.Nombre)
                 .ToList();
 
+            // ── Publicadores sin informe agrupados por grupo ──────────────────
+            var idsConInforme = informes.Select(i => i.IdPublicador).ToHashSet();
+
             var publicadoresSinInforme = publicadoresActivos
-                .Where(p => !informes.Any(i => i.IdPublicador == p.IdPublicador))
-                .Select(p => p.NombreCompleto)
+                .Where(p => !idsConInforme.Contains(p.IdPublicador))
                 .ToList();
 
+            // Agrupar por grupo — sin grupo va en clave "Sin grupo"
+            var sinInformePorGrupo = new Dictionary<string, List<string>>();
+
+            foreach (var pub in publicadoresSinInforme.OrderBy(p => p.NombreCompleto))
+            {
+                // Buscar nombre del grupo
+                var nombreGrupo = pub.IdGrupo.HasValue
+                    ? grupos.FirstOrDefault(g => g.IdGrupo == pub.IdGrupo.Value)?.Nombre ?? "Sin grupo"
+                    : "Sin grupo";
+
+                if (!sinInformePorGrupo.ContainsKey(nombreGrupo))
+                    sinInformePorGrupo[nombreGrupo] = new List<string>();
+
+                sinInformePorGrupo[nombreGrupo].Add(pub.NombreCompleto);
+            }
+
+            // Ordenar: grupos primero (alfabético), "Sin grupo" al final
+            var sinInformeOrdenado = sinInformePorGrupo
+                .OrderBy(kvp => kvp.Key == "Sin grupo" ? 1 : 0)
+                .ThenBy(kvp => kvp.Key)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+            // ── Armar respuesta ───────────────────────────────────────────────
             var total = new TotalInformeDto
             {
                 Ano = ano,
@@ -125,7 +155,18 @@ public class BusInformeMensual : IBusInformeMensual
                     .Select(i => i.IdPublicador)
                     .Distinct()
                     .Count(),
-                PromedioAsistenciaReuniones = Math.Round(promedioReuniones, 1),
+                PromedioReunionEntreSemana = new PromedioReunionDto
+                {
+                    HayReuniones = reunionesES.Any(),
+                    CantidadReuniones = reunionesES.Count,
+                    Promedio = promedioES
+                },
+                PromedioReunionFinSemana = new PromedioReunionDto
+                {
+                    HayReuniones = reunionesFS.Any(),
+                    CantidadReuniones = reunionesFS.Count,
+                    Promedio = promedioFS
+                },
                 Publicadores = new ResumenTipoDto
                 {
                     CantidadInformes = infoPublicadores.Count,
@@ -147,7 +188,7 @@ public class BusInformeMensual : IBusInformeMensual
                 {
                     ReunionesRegistradas = reuniones.Any(),
                     GruposSinInforme = gruposSinInforme,
-                    PublicadoresSinInforme = publicadoresSinInforme
+                    PublicadoresSinInformePorGrupo = sinInformeOrdenado
                 }
             };
 

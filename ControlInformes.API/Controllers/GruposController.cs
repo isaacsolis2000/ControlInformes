@@ -1,7 +1,9 @@
 ﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+[Authorize]
 [ApiController]
 [Route("api/grupos")]
 public class GruposController : ControllerBase

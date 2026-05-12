@@ -11,5 +11,5 @@ public interface IBusAsistencia
     Task<ApiResponse<Guid>> RegistrarFechaAsync(RegistrarFechaDto dto);
     Task<ApiResponse<string>> ActualizarAsync(ActualizarAsistenciaDto dto);
     Task<ApiResponse<string>> EliminarAsync(Guid id);
-    Task<ApiResponse<byte[]>> DescargarTarjetaReunionesAsync(int anoServicio);
+    Task<ApiResponse<byte[]>> DescargarTarjetaReunionesAsync(int anoServicio1, int anoServicio2);
 }

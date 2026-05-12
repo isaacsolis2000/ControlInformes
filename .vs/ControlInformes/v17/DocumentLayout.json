@@ -1,32 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Cipresses\\Sistema\\ControlInformes\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\implementations\\busasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\implementations\\busasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.data\\implementations\\datasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|solutionrelative:controlinformes.data\\implementations\\datasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.data\\interfaces\\idatasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{BD9A4751-ED88-48E6-BF13-2012F0AD0D04}|ControlInformes.Data\\ControlInformes.Data.csproj|solutionrelative:controlinformes.data\\interfaces\\idatasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controllers\\asistenciacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controllers\\asistenciacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\dtos\\asistenciadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\dtos\\asistenciadto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\interfaces\\ibusasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\interfaces\\ibusasistencia.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -34,22 +9,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 16,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AsistenciaController.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\AsistenciaController.cs",
-              "RelativeDocumentMoniker": "ControlInformes.API\\Controllers\\AsistenciaController.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\AsistenciaController.cs",
-              "RelativeToolTip": "ControlInformes.API\\Controllers\\AsistenciaController.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAADwvz8AAAA7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T04:32:57.381Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:15:0:{2456bd12-ecf7-4988-a4a6-67d49173f565}"
@@ -93,71 +54,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:25:0:{2456bd12-ecf7-4988-a4a6-67d49173f565}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DatAsistencia.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Implementations\\DatAsistencia.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Data\\Implementations\\DatAsistencia.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Implementations\\DatAsistencia.cs",
-              "RelativeToolTip": "ControlInformes.Data\\Implementations\\DatAsistencia.cs",
-              "ViewState": "AgIAACUAAAAAAAAAAAAAAD4AAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T05:11:39.496Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "IDatAsistencia.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Interfaces\\IDatAsistencia.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Data\\Interfaces\\IDatAsistencia.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\Interfaces\\IDatAsistencia.cs",
-              "RelativeToolTip": "ControlInformes.Data\\Interfaces\\IDatAsistencia.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T05:11:32.412Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "IBusAsistencia.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusAsistencia.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\Interfaces\\IBusAsistencia.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Interfaces\\IBusAsistencia.cs",
-              "RelativeToolTip": "ControlInformes.Business\\Interfaces\\IBusAsistencia.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T04:50:44.046Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AsistenciaDto.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\AsistenciaDto.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\DTOs\\AsistenciaDto.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\AsistenciaDto.cs",
-              "RelativeToolTip": "ControlInformes.Business\\DTOs\\AsistenciaDto.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAhwBoAAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T04:50:22.352Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BusAsistencia.cs",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusAsistencia.cs",
-              "RelativeDocumentMoniker": "ControlInformes.Business\\Implementations\\BusAsistencia.cs",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusAsistencia.cs",
-              "RelativeToolTip": "ControlInformes.Business\\Implementations\\BusAsistencia.cs",
-              "ViewState": "AgIAAEABAAAAAAAAAAAuwHYBAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-09T04:46:59.4Z",
-              "EditorCaption": ""
             }
           ]
         }

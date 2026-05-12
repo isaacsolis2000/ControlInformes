@@ -1,9 +1,11 @@
 ﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlInformes.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/asistencia")]
 public class AsistenciaController : ControllerBase
@@ -59,15 +61,17 @@ public class AsistenciaController : ControllerBase
     }
 
     [HttpGet("tarjeta/pdf")]
-    public async Task<IActionResult> DescargarTarjetaReuniones([FromQuery] int anoServicio)
+    public async Task<IActionResult> DescargarTarjetaReuniones(
+    [FromQuery] int anoServicio1,
+    [FromQuery] int anoServicio2)
     {
-        var response = await _busAsistencia.DescargarTarjetaReunionesAsync(anoServicio);
+        var response = await _busAsistencia.DescargarTarjetaReunionesAsync(anoServicio1, anoServicio2);
         if (response.HasError)
             return StatusCode(response.HttpCode, response);
 
         return File(
             response.Result!,
             "application/pdf",
-            $"tarjeta_reuniones_{anoServicio}-{anoServicio + 1}.pdf");
+            $"tarjeta_reuniones_{anoServicio1}-{anoServicio2}.pdf");
     }
 }

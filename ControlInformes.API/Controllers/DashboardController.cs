@@ -1,8 +1,10 @@
 ﻿using ControlInformes.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlInformes.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/dashboard")]
 public class DashboardController : ControllerBase

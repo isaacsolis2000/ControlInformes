@@ -3,6 +3,7 @@ D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\appset
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\ControlInformes.API.staticwebassets.endpoints.json
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\ControlInformes.API.exe
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\Template\Template_Tarjeta_Publicador.pdf
+D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\Template\Templete_Tarjeta_Reuniones.pdf
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\ControlInformes.API.deps.json
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\ControlInformes.API.runtimeconfig.json
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\ControlInformes.API.dll
@@ -193,4 +194,3 @@ D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\refint
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ControlInformes.API.pdb
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ControlInformes.API.genruntimeconfig.cache
 D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\obj\Debug\net8.0\ref\ControlInformes.API.dll
-D:\Cipresses\Sistema\ControlInformes\ControlInformes.API\bin\Debug\net8.0\Template\Templete_Tarjeta_Reuniones.pdf

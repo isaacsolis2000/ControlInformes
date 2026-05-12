@@ -1,4 +1,4 @@
-using ControlInformes.Domain.Enums;
+﻿using ControlInformes.Domain.Enums;
 
 namespace ControlInformes.Business.DTOs;
 
@@ -65,24 +65,23 @@ public class TotalInformeDto
 {
     public int Ano { get; set; }
     public int Mes { get; set; }
-
-    // Informes generales
     public int TotalPublicadores { get; set; }
-    public double PromedioAsistenciaReuniones { get; set; }
 
-    // Publicadores
+    // ← Separado por tipo de reunión
+    public PromedioReunionDto PromedioReunionEntreSemana { get; set; } = new();
+    public PromedioReunionDto PromedioReunionFinSemana { get; set; } = new();
+
     public ResumenTipoDto Publicadores { get; set; } = new();
-
-    // Precursores auxiliares
     public ResumenPrecursorDto PrecursoresAuxiliares { get; set; } = new();
-
-    // Precursores regulares
     public ResumenPrecursorDto PrecursoresRegulares { get; set; } = new();
-
-    // Pendientes
     public PendientesDto Pendientes { get; set; } = new();
 }
-
+public class PromedioReunionDto
+{
+    public bool HayReuniones { get; set; }
+    public int CantidadReuniones { get; set; }
+    public double Promedio { get; set; }
+}
 public class ResumenTipoDto
 {
     public int CantidadInformes { get; set; }
@@ -100,7 +99,9 @@ public class PendientesDto
 {
     public bool ReunionesRegistradas { get; set; }
     public List<string> GruposSinInforme { get; set; } = new();
-    public List<string> PublicadoresSinInforme { get; set; } = new();
+
+    // ← Cambia de List<string> a Dictionary<string, List<string>>
+    public Dictionary<string, List<string>> PublicadoresSinInformePorGrupo { get; set; } = new();
 }
 
 // Importar Excel
@@ -124,7 +125,7 @@ public class InformeExcelRowDto
     public string? IdPublicador { get; set; }
 }
 
-// Resultado importaci�n
+// Resultado importación
 public class ResultadoImportacionDto
 {
     public int Exitosos { get; set; }

@@ -124,7 +124,12 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "anoServicio",
+        "Name": "anoServicio1",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "anoServicio2",
         "Type": "System.Int32",
         "IsRequired": false
       }
@@ -746,6 +751,27 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.PublicadoresController",
+    "Method": "DescargarTarjetaResumen",
+    "RelativePath": "api/publicadores/tarjeta-resumen/pdf",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "anoServicio",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "tipo",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   },
   {

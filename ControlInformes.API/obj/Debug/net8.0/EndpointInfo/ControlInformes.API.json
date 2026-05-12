@@ -198,7 +198,15 @@
         ],
         "parameters": [
           {
-            "name": "anoServicio",
+            "name": "anoServicio1",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "anoServicio2",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -1200,6 +1208,35 @@
         }
       }
     },
+    "/api/publicadores/tarjeta-resumen/pdf": {
+      "get": {
+        "tags": [
+          "Publicadores"
+        ],
+        "parameters": [
+          {
+            "name": "anoServicio",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tipo",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/TipoResumenPublicador"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/reportes/resumen-mensual": {
       "get": {
         "tags": [
@@ -1570,6 +1607,15 @@
           1,
           2,
           3
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TipoResumenPublicador": {
+        "enum": [
+          0,
+          1,
+          2
         ],
         "type": "integer",
         "format": "int32"

@@ -1,9 +1,12 @@
 ﻿using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
+using ControlInformes.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControlInformes.API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/publicadores")]
 public class PublicadoresController : ControllerBase
@@ -117,5 +120,28 @@ public class PublicadoresController : ControllerBase
         var lista = archivos.ToList();
         var response = await _busPublicador.ImportarTarjetasAsync(lista, idGrupo);
         return StatusCode(response.HttpCode, response);
+    }
+
+    [HttpGet("tarjeta-resumen/pdf")]
+    public async Task<IActionResult> DescargarTarjetaResumen(
+    [FromQuery] int anoServicio,
+    [FromQuery] TipoResumenPublicador tipo)
+    {
+        var response = await _busPublicador.DescargarTarjetaResumenAsync(anoServicio, tipo);
+        if (response.HasError)
+            return StatusCode(response.HttpCode, response);
+
+        var nombreTipo = tipo switch
+        {
+            TipoResumenPublicador.Publicador => "Publicadores",
+            TipoResumenPublicador.PrecursorAuxiliar => "Precursores_Auxiliares",
+            TipoResumenPublicador.PrecursorRegular => "Precursores_Regulares",
+            _ => "Publicadores"
+        };
+
+        return File(
+            response.Result!,
+            "application/pdf",
+            $"Tarjeta_{nombreTipo}_{anoServicio}.pdf");
     }
 }

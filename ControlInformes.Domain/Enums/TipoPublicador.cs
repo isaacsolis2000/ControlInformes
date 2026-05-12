@@ -7,3 +7,9 @@ public enum TipoPublicador
     PrecursorAuxiliar = 2,
     PrecursorRegular = 3
 }
+public enum TipoResumenPublicador
+{
+    Publicador = 0, // Incluye Publicador + NoBautizado
+    PrecursorAuxiliar = 1,
+    PrecursorRegular = 2
+}
