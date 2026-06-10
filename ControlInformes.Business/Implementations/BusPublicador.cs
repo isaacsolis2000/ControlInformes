@@ -9,6 +9,7 @@ using iText.Forms;
 using iText.Kernel.Pdf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Globalization;
 using System.IO.Compression;
 
 namespace ControlInformes.Business.Implementations;
@@ -177,30 +178,40 @@ public class BusPublicador : IBusPublicador
                     $"Publicador con Id ({idPublicador}) no encontrado.",
                     ErrorCatalog.EntidadNoEncontrada);
 
+            // ── Año de servicio ───────────────────────────────────────
+            // El año de servicio 2026 = Sep 2025 → Ago 2026
             var now = DateTime.Now;
-            int anoInicio = anoServicio ?? (now.Month >= 9 ? now.Year : now.Year - 1);
-            int anoFin = anoInicio + 1;
+            int anoServicioActual = anoServicio ?? (now.Month >= 9 ? now.Year + 1 : now.Year);
+            int anioSepDic = anoServicioActual - 1; // Sep–Dic caen en el año civil anterior
+            int anioEneAgo = anoServicioActual;     // Ene–Ago caen en el año civil del año de servicio
 
+            // ── Informes del publicador ───────────────────────────────
             var informes = await _datInforme.GetByPublicadorAsync(idPublicador);
+
             var meses = new List<TarjetaMesDto>();
 
-            for (int m = 9; m <= 12; m++)
+            var mesesConfig = new[]
             {
-                var inf = informes.FirstOrDefault(i => i.Ano == anoInicio && i.Mes == m);
-                meses.Add(MapMes(anoInicio, m, inf));
-            }
-            for (int m = 1; m <= 8; m++)
+            (9,  anioSepDic), (10, anioSepDic), (11, anioSepDic), (12, anioSepDic),
+            (1,  anioEneAgo), (2,  anioEneAgo), (3,  anioEneAgo), (4,  anioEneAgo),
+            (5,  anioEneAgo), (6,  anioEneAgo), (7,  anioEneAgo), (8,  anioEneAgo)
+        };
+
+            foreach (var (mes, ano) in mesesConfig)
             {
-                var inf = informes.FirstOrDefault(i => i.Ano == anoFin && i.Mes == m);
-                meses.Add(MapMes(anoFin, m, inf));
+                var inf = informes.FirstOrDefault(i => i.Ano == ano && i.Mes == mes);
+                meses.Add(MapMes(ano, mes, inf));
             }
 
+            // ── Armar DTO ─────────────────────────────────────────────
             var tarjeta = new TarjetaPublicadorDto
             {
                 IdPublicador = publicador.IdPublicador,
                 NombreCompleto = publicador.NombreCompleto,
                 FechaNacimiento = publicador.FechaNacimiento,
                 FechaBautismo = publicador.FechaBautismo,
+                FechaNacimientoFormateada = publicador.FechaNacimiento?.ToString("dd-MM-yyyy"),
+                FechaBautismoFormateada = publicador.FechaBautismo?.ToString("dd-MM-yyyy"),
                 Genero = publicador.Genero,
                 GeneroDescripcion = publicador.Genero.ToString(),
                 CondicionEspiritual = publicador.CondicionEspiritual,
@@ -210,8 +221,8 @@ public class BusPublicador : IBusPublicador
                 Rol = publicador.Rol,
                 RolDescripcion = publicador.Rol.ToString(),
                 NombreGrupo = publicador.Grupo?.Nombre ?? string.Empty,
-                AnoServicioInicio = anoInicio,
-                AnoServicioFin = anoFin,
+                AnoServicioInicio = anoServicioActual,
+                AnoServicioFin = anioEneAgo,
                 Meses = meses
             };
 
@@ -357,7 +368,7 @@ public class BusPublicador : IBusPublicador
     }
 
     public async Task<ApiResponse<ResultadoImportacionTarjetasDto>> ImportarTarjetasAsync(
-        List<IFormFile> archivos, Guid? idGrupo)
+    List<IFormFile> archivos, Guid? idGrupo)
     {
         try
         {
@@ -409,8 +420,6 @@ public class BusPublicador : IBusPublicador
                     DateTime? fechaBaut = ParseFecha(fechaBautStr);
 
                     // ── Género ────────────────────────────────────────────────
-                    // Solo "Yes" es verdadero, vacío o "Off" es falso
-                    var esHombre = GetCheckbox(form, "900_3_CheckBox");
                     var esMujer = GetCheckbox(form, "900_4_CheckBox");
                     var genero = esMujer ? Genero.Mujer : Genero.Hombre;
 
@@ -421,11 +430,12 @@ public class BusPublicador : IBusPublicador
                         : CondicionEspiritual.OtrasOvejas;
 
                     // ── Tipo de publicador ────────────────────────────────────
-                    // Si no está marcado ninguno = Publicador
                     var esPrecursorRegular = GetCheckbox(form, "900_10_CheckBox");
                     var tipo = esPrecursorRegular
                         ? TipoPublicador.PrecursorRegular
-                        : TipoPublicador.Publicador;
+                        : fechaBaut == null
+                            ? TipoPublicador.NoBautizado
+                            : TipoPublicador.Publicador;
 
                     // ── Rol ───────────────────────────────────────────────────
                     var esAnciano = GetCheckbox(form, "900_8_CheckBox");
@@ -437,12 +447,16 @@ public class BusPublicador : IBusPublicador
                             : RolCongregacion.Ninguno;
 
                     // ── Año de servicio ───────────────────────────────────────
-                    if (!int.TryParse(anoServicioStr?.Trim(), out int anoInicio))
+                    // El año de servicio 2026 = Sep 2025 → Ago 2026
+                    if (!int.TryParse(anoServicioStr?.Trim(), out int anoServicio))
                     {
                         var now = DateTime.Now;
-                        anoInicio = now.Month >= 9 ? now.Year : now.Year - 1;
+                        // Si estamos en Sep o después, el año de servicio en curso es el siguiente año civil
+                        anoServicio = now.Month >= 9 ? now.Year + 1 : now.Year;
                     }
-                    int anoFin = anoInicio + 1;
+
+                    int anioSepDic = anoServicio - 1; // Sep–Dic caen en el año civil anterior
+                    int anioEnéAgo = anoServicio;     // Ene–Ago caen en el año civil del año de servicio
 
                     // ── Upsert publicador ─────────────────────────────────────
                     var publicadorExistente = await _datPublicador.GetByNombreAsync(nombre.Trim());
@@ -484,23 +498,24 @@ public class BusPublicador : IBusPublicador
                     await _datPublicador.SaveChangesAsync();
 
                     // ── Leer e importar informes mensuales ────────────────────
-                    // Sep=20, Oct=21, Nov=22, Dic=23, Ene=24, Feb=25
-                    // Mar=26, Abr=27, May=28, Jun=29, Jul=30, Ago=31
+                    // (campoBase, mes, año)
+                    // Sep–Dic → anioSepDic (ej. 2025 para año de servicio 2026)
+                    // Ene–Ago → anioEnéAgo (ej. 2026 para año de servicio 2026)
                     var mesesConfig = new[]
                     {
-                        (20, 9,  anoInicio),
-                        (21, 10, anoInicio),
-                        (22, 11, anoInicio),
-                        (23, 12, anoInicio),
-                        (24, 1,  anoFin),
-                        (25, 2,  anoFin),
-                        (26, 3,  anoFin),
-                        (27, 4,  anoFin),
-                        (28, 5,  anoFin),
-                        (29, 6,  anoFin),
-                        (30, 7,  anoFin),
-                        (31, 8,  anoFin)
-                    };
+                    (20, 9,  anioSepDic),
+                    (21, 10, anioSepDic),
+                    (22, 11, anioSepDic),
+                    (23, 12, anioSepDic),
+                    (24, 1,  anioEnéAgo),
+                    (25, 2,  anioEnéAgo),
+                    (26, 3,  anioEnéAgo),
+                    (27, 4,  anioEnéAgo),
+                    (28, 5,  anioEnéAgo),
+                    (29, 6,  anioEnéAgo),
+                    (30, 7,  anioEnéAgo),
+                    (31, 8,  anioEnéAgo)
+                };
 
                     var nuevosInformes = new List<InformeMensual>();
 
@@ -614,8 +629,8 @@ public class BusPublicador : IBusPublicador
         var form = PdfAcroForm.GetAcroForm(pdfDoc, false);
 
         SetCampo(form, "900_1_Text_SanSerif", tarjeta.NombreCompleto);
-        SetCampo(form, "900_2_Text_SanSerif", tarjeta.FechaNacimiento?.ToString("dd/MM/yyyy") ?? string.Empty);
-        SetCampo(form, "900_5_Text_SanSerif", tarjeta.FechaBautismo?.ToString("dd/MM/yyyy") ?? string.Empty);
+        SetCampo(form, "900_2_Text_SanSerif", tarjeta.FechaNacimiento?.ToString("dd-MM-yyyy") ?? string.Empty);
+        SetCampo(form, "900_5_Text_SanSerif", tarjeta.FechaBautismo?.ToString("dd-MM-yyyy") ?? string.Empty);
         SetCampo(form, "900_13_Text_C_SanSerif", tarjeta.AnoServicioInicio.ToString());
 
         SetCheckbox(form, "900_3_CheckBox", tarjeta.Genero == Genero.Hombre);
@@ -684,12 +699,18 @@ public class BusPublicador : IBusPublicador
 
     private static DateTime? ParseFecha(string? valor)
     {
-        if (string.IsNullOrWhiteSpace(valor)) return null;
-        return DateTime.TryParseExact(valor.Trim(), "dd/MM/yyyy",
-            System.Globalization.CultureInfo.InvariantCulture,
-            System.Globalization.DateTimeStyles.None, out var fecha)
-            ? fecha
-            : null;
+        if (string.IsNullOrWhiteSpace(valor))
+            return null;
+
+        if (DateTime.TryParseExact(
+                valor.Trim(),
+                "dd-MM-yyyy",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var fecha))
+            return fecha;
+
+        return null;
     }
 
     private static (int? horas, int cursos) LimpiarCamposPorTipo(

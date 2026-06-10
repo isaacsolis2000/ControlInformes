@@ -117,6 +117,32 @@
   },
   {
     "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "ImportarPlantilla",
+    "RelativePath": "api/asistencia/importar/excel",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "archivo",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
+    "Method": "DescargarPlantilla",
+    "RelativePath": "api/asistencia/plantilla/excel",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ControlInformes.API.Controllers.AsistenciaController",
     "Method": "DescargarTarjetaReuniones",
     "RelativePath": "api/asistencia/tarjeta/pdf",
     "HttpMethod": "GET",

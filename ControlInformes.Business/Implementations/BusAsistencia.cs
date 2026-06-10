@@ -373,4 +373,180 @@ public class BusAsistencia : IBusAsistencia
         if (campo != null)
             campo.SetValue(valor);
     }
+
+    public async Task<ApiResponse<byte[]>> DescargarPlantillaAsync()
+    {
+        try
+        {
+            using var ms = new MemoryStream();
+            using var workbook = new ClosedXML.Excel.XLWorkbook();
+            var ws = workbook.Worksheets.Add("Asistencia");
+
+            // Encabezados
+            ws.Cell(1, 1).Value = "FechaReunion";       // dd/MM/yyyy
+            ws.Cell(1, 2).Value = "TipoReunion";         // Publica | EntreSemana | (vacío = sin reunión)
+            ws.Cell(1, 3).Value = "CantidadPresencial";
+            ws.Cell(1, 4).Value = "CantidadVirtual";
+            ws.Cell(1, 5).Value = "Observacion";
+
+            // Estilo encabezado
+            var header = ws.Range("A1:E1");
+            header.Style.Font.Bold = true;
+            header.Style.Fill.BackgroundColor = ClosedXML.Excel.XLColor.FromArgb(70, 130, 180);
+            header.Style.Font.FontColor = ClosedXML.Excel.XLColor.White;
+
+            // Fila de ejemplo
+            ws.Cell(2, 1).Value = DateTime.Today.ToString("dd/MM/yyyy");
+            ws.Cell(2, 2).Value = "EntreSemana";
+            ws.Cell(2, 3).Value = 45;
+            ws.Cell(2, 4).Value = 10;
+            ws.Cell(2, 5).Value = "Ejemplo";
+
+            // Validación dropdown en columna B (filas 2–200)
+            var tiposValidos = ws.Range("B2:B200");
+            tiposValidos.SetDataValidation()
+                .List("\"Publica,EntreSemana\"", true);
+
+            // Ancho columnas
+            ws.Column(1).Width = 18;
+            ws.Column(2).Width = 18;
+            ws.Column(3).Width = 22;
+            ws.Column(4).Width = 18;
+            ws.Column(5).Width = 30;
+
+            workbook.SaveAs(ms);
+            return ApiResponse<byte[]>.Ok(ms.ToArray(), "Plantilla generada.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al generar plantilla de asistencia.");
+            return ApiResponse<byte[]>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
+    public async Task<ApiResponse<ImportarResultadoDto>> ImportarPlantillaAsync(Stream archivo)
+    {
+        var resultado = new ImportarResultadoDto();
+
+        try
+        {
+            using var workbook = new ClosedXML.Excel.XLWorkbook(archivo);
+            var ws = workbook.Worksheet(1);
+            var lastRow = ws.LastRowUsed()?.RowNumber() ?? 1;
+
+            for (int fila = 2; fila <= lastRow; fila++)
+            {
+                try
+                {
+                    // ── Leer fecha (puede ser texto o número serial de Excel) ──
+                    var celdaFecha = ws.Cell(fila, 1);
+                    DateTime fecha;
+
+                    if (celdaFecha.DataType == ClosedXML.Excel.XLDataType.DateTime)
+                    {
+                        fecha = celdaFecha.GetDateTime();
+                    }
+                    else
+                    {
+                        var fechaStr = celdaFecha.GetString().Trim();
+                        if (string.IsNullOrEmpty(fechaStr)) continue;
+
+                        if (!DateTime.TryParseExact(fechaStr,
+                                new[] { "dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy" },
+                                System.Globalization.CultureInfo.InvariantCulture,
+                                System.Globalization.DateTimeStyles.None, out fecha))
+                        {
+                            resultado.Errores++;
+                            resultado.Detalles.Add($"Fila {fila}: Fecha inválida '{fechaStr}'.");
+                            continue;
+                        }
+                    }
+
+                    // ── Leer tipo ──────────────────────────────────────────────
+                    var tipoStr = ws.Cell(fila, 2).GetString().Trim();
+                    TipoReunion? tipo = tipoStr switch
+                    {
+                        "Publica" => TipoReunion.Publica,
+                        "EntreSemana" => TipoReunion.EntreSemana,
+                        _ => null
+                    };
+
+                    // ── Leer cantidades ────────────────────────────────────────
+                    int presencial = 0, virtualC = 0;
+                    var celdaP = ws.Cell(fila, 3);
+                    var celdaV = ws.Cell(fila, 4);
+
+                    if (celdaP.DataType == ClosedXML.Excel.XLDataType.Number)
+                        presencial = (int)celdaP.GetDouble();
+                    else if (int.TryParse(celdaP.GetString(), out var p))
+                        presencial = p;
+
+                    if (celdaV.DataType == ClosedXML.Excel.XLDataType.Number)
+                        virtualC = (int)celdaV.GetDouble();
+                    else if (int.TryParse(celdaV.GetString(), out var v))
+                        virtualC = v;
+
+                    string? obs = ws.Cell(fila, 5).GetString().Trim().NullIfEmpty();
+
+                    // ── Validaciones ───────────────────────────────────────────
+                    var errores = ValidarAsistencia(presencial, virtualC);
+                    if (errores.Count > 0)
+                    {
+                        resultado.Errores++;
+                        resultado.Detalles.Add($"Fila {fila}: {string.Join(" ", errores)}");
+                        continue;
+                    }
+
+                    // ── Upsert ─────────────────────────────────────────────────
+                    Asistencia? existente = tipo.HasValue
+                        ? await _datAsistencia.GetByFechaYTipoAsync(fecha, tipo.Value)
+                        : await _datAsistencia.GetByFechaSinTipoAsync(fecha);
+
+                    if (existente != null)
+                    {
+                        existente.CantidadPresencial = presencial;
+                        existente.CantidadVirtual = virtualC;
+                        existente.Observacion = obs;
+                        existente.TipoReunion = tipo;
+                        _datAsistencia.Update(existente);
+                        resultado.Actualizados++;
+                    }
+                    else
+                    {
+                        await _datAsistencia.AddAsync(new Asistencia
+                        {
+                            IdAsistencia = Guid.NewGuid(),
+                            FechaReunion = fecha,
+                            TipoReunion = tipo,
+                            CantidadPresencial = presencial,
+                            CantidadVirtual = virtualC,
+                            Observacion = obs
+                        });
+                        resultado.Insertados++;
+                    }
+                }
+                catch (Exception exFila)
+                {
+                    _logger.LogWarning(exFila, "Error procesando fila {Fila}.", fila);
+                    resultado.Errores++;
+                    resultado.Detalles.Add($"Fila {fila}: Error inesperado — {exFila.Message}");
+                }
+            }
+
+            await _datAsistencia.SaveChangesAsync();
+
+            return ApiResponse<ImportarResultadoDto>.Ok(resultado,
+                $"Importación completada. Insertados: {resultado.Insertados}, " +
+                $"Actualizados: {resultado.Actualizados}, Errores: {resultado.Errores}.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al importar plantilla de asistencia.");
+            return ApiResponse<ImportarResultadoDto>.Error(
+                ErrorCatalog.GetMensaje(ErrorCatalog.ErrorInterno), ErrorCatalog.ErrorInterno);
+        }
+    }
+
+    // Helper para string vacío → null
 }

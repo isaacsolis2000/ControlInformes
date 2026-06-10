@@ -19,6 +19,8 @@ public class TarjetaPublicadorDto
     public string NombreGrupo { get; set; } = string.Empty;
     public int AnoServicioInicio { get; set; }
     public int AnoServicioFin { get; set; }
+    public string? FechaNacimientoFormateada { get; set; }
+    public string? FechaBautismoFormateada { get; set; }
     public List<TarjetaMesDto> Meses { get; set; } = new();
 }
 

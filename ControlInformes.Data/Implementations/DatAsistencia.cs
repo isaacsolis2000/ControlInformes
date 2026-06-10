@@ -67,4 +67,12 @@ public class DatAsistencia : IDatAsistencia
                  && a.TipoReunion == tipoReunion)
         .OrderBy(a => a.FechaReunion)
         .ToListAsync();
+
+    // Interfaz
+
+
+    // Implementación
+    public async Task<Asistencia?> GetByFechaSinTipoAsync(DateTime fecha)
+        => await _context.Asistencias
+            .FirstOrDefaultAsync(a => a.FechaReunion.Date == fecha.Date && a.TipoReunion == null);
 }

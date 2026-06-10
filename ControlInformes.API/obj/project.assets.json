@@ -10602,6 +10602,7 @@
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "ClosedXML >= 0.102.*",
       "ControlInformes.Business >= 1.0.0",
       "ControlInformes.Data >= 1.0.0",
       "ControlInformes.Domain >= 1.0.0",
@@ -10677,6 +10678,10 @@
       "net8.0": {
         "targetAlias": "net8.0",
         "dependencies": {
+          "ClosedXML": {
+            "target": "Package",
+            "version": "[0.102.*, )"
+          },
           "Microsoft.AspNetCore.Authentication.JwtBearer": {
             "target": "Package",
             "version": "[8.0.11, )"

@@ -74,4 +74,31 @@ public class AsistenciaController : ControllerBase
             "application/pdf",
             $"tarjeta_reuniones_{anoServicio1}-{anoServicio2}.pdf");
     }
+
+    [HttpGet("plantilla/excel")]
+    public async Task<IActionResult> DescargarPlantilla()
+    {
+        var response = await _busAsistencia.DescargarPlantillaAsync();
+        if (response.HasError)
+            return StatusCode(response.HttpCode, response);
+
+        return File(
+            response.Result!,
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "plantilla_asistencia.xlsx");
+    }
+
+    [HttpPost("importar/excel")]
+    public async Task<IActionResult> ImportarPlantilla(IFormFile archivo)
+    {
+        if (archivo == null || archivo.Length == 0)
+            return BadRequest("Debe adjuntar un archivo.");
+
+        if (!archivo.FileName.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("Solo se aceptan archivos .xlsx.");
+
+        using var stream = archivo.OpenReadStream();
+        var response = await _busAsistencia.ImportarPlantillaAsync(stream);
+        return StatusCode(response.HttpCode, response);
+    }
 }

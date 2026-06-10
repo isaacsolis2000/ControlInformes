@@ -12,4 +12,6 @@ public interface IBusAsistencia
     Task<ApiResponse<string>> ActualizarAsync(ActualizarAsistenciaDto dto);
     Task<ApiResponse<string>> EliminarAsync(Guid id);
     Task<ApiResponse<byte[]>> DescargarTarjetaReunionesAsync(int anoServicio1, int anoServicio2);
+    Task<ApiResponse<byte[]>> DescargarPlantillaAsync();
+    Task<ApiResponse<ImportarResultadoDto>> ImportarPlantillaAsync(Stream archivo);
 }

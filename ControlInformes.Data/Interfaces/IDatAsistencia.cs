@@ -14,4 +14,5 @@ public interface IDatAsistencia
     void Delete(Asistencia asistencia);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<List<Asistencia>> GetByMesYTipoAsync(int ano, int mes, TipoReunion tipoReunion);
+    Task<Asistencia?> GetByFechaSinTipoAsync(DateTime fecha);
 }

@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "D:\\Cipresses\\Sistema\\ControlInformes\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
-      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+      "AbsoluteMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.api\\controllers\\publicadorescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F720C2F4-9C70-4AE2-B255-2D712CD2057A}|ControlInformes.API\\ControlInformes.API.csproj|solutionrelative:controlinformes.api\\controllers\\publicadorescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\implementations\\buspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\implementations\\buspublicador.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|d:\\cipresses\\sistema\\controlinformes\\controlinformes.business\\dtos\\tarjetapublicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6DE6B3D1-E40B-44AF-A8DB-FBEBE97B9DD8}|ControlInformes.Business\\ControlInformes.Business.csproj|solutionrelative:controlinformes.business\\dtos\\tarjetapublicadordto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -63,14 +71,42 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": ".gitignore",
-              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\.gitignore",
-              "RelativeDocumentMoniker": "ControlInformes.API\\.gitignore",
-              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\.gitignore",
-              "RelativeToolTip": "ControlInformes.API\\.gitignore",
-              "ViewState": "AgIAAFIAAAAAAAAAAAAswIkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-06-08T00:19:41.069Z",
+              "Title": "PublicadoresController.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\PublicadoresController.cs",
+              "RelativeDocumentMoniker": "ControlInformes.API\\Controllers\\PublicadoresController.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\Controllers\\PublicadoresController.cs",
+              "RelativeToolTip": "ControlInformes.API\\Controllers\\PublicadoresController.cs",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAAwFUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-09T13:36:21.477Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BusPublicador.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusPublicador.cs",
+              "RelativeDocumentMoniker": "ControlInformes.Business\\Implementations\\BusPublicador.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\Implementations\\BusPublicador.cs",
+              "RelativeToolTip": "ControlInformes.Business\\Implementations\\BusPublicador.cs",
+              "ViewState": "AgIAAFQCAAAAAAAAAAAjwHgCAABtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-09T13:41:33.023Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TarjetaPublicadorDto.cs",
+              "DocumentMoniker": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
+              "RelativeDocumentMoniker": "ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
+              "ToolTip": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
+              "RelativeToolTip": "ControlInformes.Business\\DTOs\\TarjetaPublicadorDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-09T14:22:03.171Z",
               "EditorCaption": ""
             }
           ]
