@@ -792,6 +792,7 @@ public class BusPublicador : IBusPublicador
             SetCheckbox(form, "900_11_CheckBox", false);
             SetCheckbox(form, "900_12_CheckBox", false);
 
+            bool mostrarHoras = tipo != TipoResumenPublicador.Publicador;
             int totalCursosAnual = 0;
             int totalHorasAnual = 0;
 
@@ -818,21 +819,16 @@ public class BusPublicador : IBusPublicador
                 totalCursosAnual += cursosMes;
                 totalHorasAnual += horasMes;
 
-                bool participo = cantidadParticiparon > 0;
-
-                SetCheckbox(form, $"901_{indiceForm}_CheckBox", participo);
+                SetCheckbox(form, $"901_{indiceForm}_CheckBox", cantidadParticiparon > 0);
                 SetCampo(form, $"902_{indiceForm}_Text_C_SanSerif", cursosMes > 0 ? cursosMes.ToString() : string.Empty);
-                SetCampo(form, $"904_{indiceForm}_S21_Value", horasMes > 0 ? horasMes.ToString() : string.Empty);
-                SetCampo(form, $"905_{indiceForm}_Text_SanSerif", string.Empty); // ← notas vacío
+                SetCampo(form, $"904_{indiceForm}_S21_Value", mostrarHoras && horasMes > 0 ? horasMes.ToString() : string.Empty);
+                SetCampo(form, $"905_{indiceForm}_Text_SanSerif", cantidadParticiparon > 0 ? cantidadParticiparon.ToString() : string.Empty);
                 SetCheckbox(form, $"903_{indiceForm}_CheckBox", false);
             }
 
             // ── Totales ───────────────────────────────────────────────────────
-            // 904_32 = Total Horas
-            // 905_32 = Total Notas (vacío)
-            // El total de cursos va en 902_32 si existe, si no queda en horas
-            SetCampo(form, "904_32_S21_Value", totalHorasAnual > 0 ? totalHorasAnual.ToString() : string.Empty);
-            SetCampo(form, "905_32_Text_SanSerif", string.Empty); // ← notas total vacío
+            SetCampo(form, "904_32_S21_Value", mostrarHoras && totalHorasAnual > 0 ? totalHorasAnual.ToString() : string.Empty);
+            SetCampo(form, "905_32_Text_SanSerif", totalCursosAnual > 0 ? totalCursosAnual.ToString() : string.Empty);
 
             pdfDoc.Close();
             return ApiResponse<byte[]>.Ok(ms.ToArray(), "Tarjeta resumen generada.");

@@ -55,16 +55,17 @@ public class BusDashboard : IBusDashboard
                 return ApiResponse<DashboardDto>.Fail(
                     "Mes inválido.", ErrorCatalog.ValidacionFallida, 400);
 
-            int anoFin = anoServicio + 1;
+            int anoInicio = anoServicio - 1;  // Sep-Dic de este año
+            int anoFin    = anoServicio;       // Ene-Ago de este año
 
             // ── Publicadores ──────────────────────────────────────────────
             var publicadoresActivos = await _datPublicador.GetActivosAsync();
 
             // ── Cargar informes de todo el año de servicio (12 meses) ─────
-            // Sep-Dic del anoServicio + Ene-Ago del anoFin
+            // Sep-Dic del anoInicio + Ene-Ago del anoFin
             var informesAno = new List<Domain.Entities.InformeMensual>();
             for (int m = 9; m <= 12; m++)
-                informesAno.AddRange(await _datInforme.GetByMesAsync(anoServicio, m));
+                informesAno.AddRange(await _datInforme.GetByMesAsync(anoInicio, m));
             for (int m = 1; m <= 8; m++)
                 informesAno.AddRange(await _datInforme.GetByMesAsync(anoFin, m));
 
@@ -76,14 +77,14 @@ public class BusDashboard : IBusDashboard
             if (mes.HasValue)
             {
                 // Mes actual filtrado
-                int anoDelMes = mes.Value >= 9 ? anoServicio : anoFin;
+                int anoDelMes = mes.Value >= 9 ? anoInicio : anoFin;
                 informesFiltrados = informesAno
                     .Where(i => i.Mes == mes.Value && i.Ano == anoDelMes)
                     .ToList();
 
                 // Mes anterior para variación
                 int mesAnterior = mes.Value == 1 ? 12 : mes.Value - 1;
-                int anoMesAnterior = mesAnterior >= 9 ? anoServicio : anoFin;
+                int anoMesAnterior = mesAnterior >= 9 ? anoInicio : anoFin;
                 informesComparacion = informesAno
                     .Where(i => i.Mes == mesAnterior && i.Ano == anoMesAnterior)
                     .ToList();
@@ -122,13 +123,13 @@ public class BusDashboard : IBusDashboard
 
             if (mes.HasValue)
             {
-                int anoDelMes = mes.Value >= 9 ? anoServicio : anoFin;
+                int anoDelMes = mes.Value >= 9 ? anoInicio : anoFin;
                 var (rMes, _) = await _datAsistencia.GetPaginadoAsync(
                     anoDelMes, mes.Value, null, 1, 100);
                 reunionesFiltradas = rMes;
 
                 int mesAnterior = mes.Value == 1 ? 12 : mes.Value - 1;
-                int anoMesAnterior = mesAnterior >= 9 ? anoServicio : anoFin;
+                int anoMesAnterior = mesAnterior >= 9 ? anoInicio : anoFin;
                 var (rAnterior, _) = await _datAsistencia.GetPaginadoAsync(
                     anoMesAnterior, mesAnterior, null, 1, 100);
                 reunionesComparacion = rAnterior;
@@ -141,7 +142,7 @@ public class BusDashboard : IBusDashboard
 
                 for (int m = 9; m <= 12; m++)
                 {
-                    var (r, _) = await _datAsistencia.GetPaginadoAsync(anoServicio, m, null, 1, 100);
+                    var (r, _) = await _datAsistencia.GetPaginadoAsync(anoInicio, m, null, 1, 100);
                     reunionesFiltradas.AddRange(r);
                 }
                 for (int m = 1; m <= 8; m++)
@@ -179,7 +180,7 @@ public class BusDashboard : IBusDashboard
 
             foreach (var (numMes, nombreMes) in _mesesServicio)
             {
-                int anoDelMes = numMes >= 9 ? anoServicio : anoFin;
+                int anoDelMes = numMes >= 9 ? anoInicio : anoFin;
                 var informesMes = informesAno
                     .Where(i => i.Mes == numMes && i.Ano == anoDelMes)
                     .ToList();
@@ -200,7 +201,7 @@ public class BusDashboard : IBusDashboard
             // ── Armar respuesta ───────────────────────────────────────────
             var dashboard = new DashboardDto
             {
-                AnoServicioInicio = anoServicio,
+                AnoServicioInicio = anoInicio,
                 AnoServicioFin = anoFin,
                 MesFiltrado = mes,
                 TotalPublicadoresActivos = publicadoresActivos.Count,

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj": {}
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj": {}
   },
   "projects": {
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj": {
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
+        "projectUniqueName": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
         "projectName": "ControlInformes.API",
-        "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
-        "packagesPath": "C:\\Users\\IGNITER\\.nuget\\packages\\",
-        "outputPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.API\\obj\\",
+        "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.API\\ControlInformes.API.csproj",
+        "packagesPath": "C:\\Users\\Office365User\\.nuget\\packages\\",
+        "outputPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IGNITER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Office365User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -32,17 +32,17 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
               }
             }
           }
@@ -57,7 +57,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -113,24 +113,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj": {
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj",
+        "projectUniqueName": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj",
         "projectName": "ControlInformes.Business",
-        "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj",
-        "packagesPath": "C:\\Users\\IGNITER\\.nuget\\packages\\",
-        "outputPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Business\\obj\\",
+        "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\ControlInformes.Business.csproj",
+        "packagesPath": "C:\\Users\\Office365User\\.nuget\\packages\\",
+        "outputPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Business\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IGNITER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Office365User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -145,14 +145,14 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
               }
             }
           }
@@ -167,7 +167,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -218,24 +218,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj",
+        "projectUniqueName": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj",
         "projectName": "ControlInformes.Data",
-        "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj",
-        "packagesPath": "C:\\Users\\IGNITER\\.nuget\\packages\\",
-        "outputPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Data\\obj\\",
+        "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\ControlInformes.Data.csproj",
+        "packagesPath": "C:\\Users\\Office365User\\.nuget\\packages\\",
+        "outputPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Data\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IGNITER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Office365User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -250,11 +250,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj"
               },
-              "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
-                "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
+              "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
+                "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj"
               }
             }
           }
@@ -269,7 +269,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -324,24 +324,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj",
+        "projectUniqueName": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj",
         "projectName": "ControlInformes.Domain",
-        "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj",
-        "packagesPath": "C:\\Users\\IGNITER\\.nuget\\packages\\",
-        "outputPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Domain\\obj\\",
+        "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\ControlInformes.Domain.csproj",
+        "packagesPath": "C:\\Users\\Office365User\\.nuget\\packages\\",
+        "outputPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IGNITER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Office365User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -368,7 +368,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -399,24 +399,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
+    "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj",
+        "projectUniqueName": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj",
         "projectName": "ControlInformes.Utils",
-        "projectPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj",
-        "packagesPath": "C:\\Users\\IGNITER\\.nuget\\packages\\",
-        "outputPath": "D:\\Cipresses\\Sistema\\ControlInformes\\ControlInformes.Utils\\obj\\",
+        "projectPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\ControlInformes.Utils.csproj",
+        "packagesPath": "C:\\Users\\Office365User\\.nuget\\packages\\",
+        "outputPath": "C:\\Informes\\Sistema\\ControlInformes\\ControlInformes.Utils\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\IGNITER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Office365User\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -443,7 +443,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "9.0.300"
+        "SdkAnalysisLevel": "10.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -474,7 +474,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

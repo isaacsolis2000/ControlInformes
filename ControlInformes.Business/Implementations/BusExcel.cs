@@ -290,11 +290,7 @@ public class BusExcel : IBusExcel
 
         if (fila.Participo)
         {
-            if (esPrecursor && !fila.Horas.HasValue)
-                errores.Add($"Fila {numFila}: Las horas son obligatorias para precursores.");
 
-            if (esPrecursor && fila.Horas.HasValue && fila.Horas == 0)
-                errores.Add($"Fila {numFila}: Las horas deben ser mayor a 0 para precursores.");
 
             if (esPublicador && fila.Horas.HasValue && fila.Horas > 0)
                 errores.Add($"Fila {numFila}: Los publicadores no registran horas.");

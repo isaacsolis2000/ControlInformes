@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ClosedXML.Excel;
+﻿using ClosedXML.Excel;
 using ControlInformes.Business.DTOs;
 using ControlInformes.Business.Interfaces;
 using ControlInformes.Data.Interfaces;
@@ -16,7 +15,6 @@ public class BusInformeMensual : IBusInformeMensual
     private readonly IDatPublicador _datPublicador;
     private readonly IDatAsistencia _datAsistencia;
     private readonly IDatGrupo _datGrupo;
-    private readonly IMapper _mapper;
     private readonly ILogger<BusInformeMensual> _logger;
 
     public BusInformeMensual(
@@ -24,14 +22,12 @@ public class BusInformeMensual : IBusInformeMensual
         IDatPublicador datPublicador,
         IDatAsistencia datAsistencia,
         IDatGrupo datGrupo,
-        IMapper mapper,
         ILogger<BusInformeMensual> logger)
     {
         _datInforme = datInforme;
         _datPublicador = datPublicador;
         _datAsistencia = datAsistencia;
         _datGrupo = datGrupo;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -214,7 +210,7 @@ public class BusInformeMensual : IBusInformeMensual
 
             var tipoFinal = dto.TipoInformativo ?? publicador.Tipo;
 
-            var errores = ValidarInforme(dto.Participo, dto.Inactivo, dto.Horas, dto.CursosBiblicos, dto.Ano, dto.Mes, tipoFinal);
+            var errores = ValidarInforme(dto.Horas, dto.CursosBiblicos, dto.Ano, dto.Mes);
             if (errores.Count > 0)
                 return ApiResponse<Guid>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
 
@@ -276,7 +272,7 @@ public class BusInformeMensual : IBusInformeMensual
 
             var tipoFinal = dto.TipoInformativo ?? informe.Tipo;
 
-            var errores = ValidarInforme(dto.Participo, dto.Inactivo, dto.Horas, dto.CursosBiblicos, informe.Ano, informe.Mes, tipoFinal);
+            var errores = ValidarInforme(dto.Horas, dto.CursosBiblicos, informe.Ano, informe.Mes);
             if (errores.Count > 0)
                 return ApiResponse<string>.Fail("Errores de validación.", ErrorCatalog.ValidacionFallida, 400, errores);
 
@@ -338,66 +334,26 @@ public class BusInformeMensual : IBusInformeMensual
 
             using var workbook = new XLWorkbook(archivo);
 
-            if (!ValidarGrupoDelArchivo(workbook, meta.IdGrupo))
-                return ApiResponse<ResultadoImportacionDto>.Error(
-                    "El archivo no corresponde al grupo seleccionado.",
-                    ErrorCatalog.ValidacionFallida);
-
             var filas = LeerExcel(workbook);
             var resultado = new ResultadoImportacionDto();
             var todosPublicadores = await _datPublicador.GetAllAsync();
             var filasValidas = new List<(Publicador publicador, InformeExcelRowDto fila, TipoPublicador tipo)>();
-            var publicadoresNuevos = new List<Publicador>(); // ← nuevos a crear
 
             // ── FASE 1: Validar todo ─────────────────────────────────────────
             foreach (var fila in filas)
             {
                 Publicador? publicador = null;
 
-                // Intentar buscar por ID primero (columna 8)
-                if (Guid.TryParse(fila.IdPublicador, out var idPublicador))
-                {
-                    publicador = todosPublicadores.FirstOrDefault(p => p.IdPublicador == idPublicador);
-                }
-
-                // Si no tiene ID (fila agregada manualmente), buscar por nombre
-                if (publicador == null && !string.IsNullOrWhiteSpace(fila.Nombre))
+                // Buscar por nombre
+                if (!string.IsNullOrWhiteSpace(fila.Nombre))
                 {
                     publicador = todosPublicadores
                         .FirstOrDefault(p => NormalizarTexto(p.NombreCompleto) == NormalizarTexto(fila.Nombre));
                 }
 
-                // Si tampoco existe por nombre → crear nuevo publicador
+                // Si no existe por nombre → ignorar la fila
                 if (publicador == null)
-                {
-                    if (string.IsNullOrWhiteSpace(fila.Nombre))
-                    {
-                        resultado.Errores.Add($"Fila sin nombre no puede ser procesada.");
-                        resultado.Fallidos++;
-                        continue;
-                    }
-
-                    if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipoNuevo))
-                    {
-                        resultado.Errores.Add($"Tipo '{fila.Tipo}' no válido para '{fila.Nombre}'.");
-                        resultado.Fallidos++;
-                        continue;
-                    }
-
-                    publicador = new Publicador
-                    {
-                        IdPublicador = Guid.NewGuid(),
-                        NombreCompleto = fila.Nombre.Trim(),
-                        Tipo = tipoNuevo,
-                        IdGrupo = meta.IdGrupo,
-                        Activo = true,
-                        Inactivo = false,
-                        FechaCreacion = DateTime.UtcNow
-                    };
-
-                    publicadoresNuevos.Add(publicador);
-                    todosPublicadores.Add(publicador); // evitar duplicados en la misma importación
-                }
+                    continue;
 
                 if (!Enum.TryParse<TipoPublicador>(fila.Tipo, true, out var tipoParseado))
                 {
@@ -406,7 +362,7 @@ public class BusInformeMensual : IBusInformeMensual
                     continue;
                 }
 
-                var errores = ValidarInforme(fila.Participo, fila.Inactivo, fila.Horas, fila.Cursos, meta.Ano, meta.Mes, tipoParseado);
+                var errores = ValidarInforme(fila.Horas, fila.Cursos, meta.Ano, meta.Mes);
                 if (errores.Count > 0)
                 {
                     resultado.Errores.AddRange(errores.Select(e => $"{fila.Nombre}: {e}"));
@@ -427,18 +383,7 @@ public class BusInformeMensual : IBusInformeMensual
                     $"Importación cancelada: {resultado.Fallidos} error(es). Corrija el archivo e intente de nuevo.");
             }
 
-            // ── FASE 3: Crear publicadores nuevos primero ────────────────────
-            if (publicadoresNuevos.Any())
-            {
-                // DESPUÉS
-                foreach (var nuevo in publicadoresNuevos)
-                    await _datPublicador.AddAsync(nuevo);
-
-                await _datPublicador.SaveChangesAsync(CancellationToken.None);
-                _logger.LogInformation("Importación Excel: {Count} publicador(es) nuevo(s) creado(s).", publicadoresNuevos.Count);
-            }
-
-            // ── FASE 4: Guardar informes ─────────────────────────────────────
+            // ── FASE 3: Guardar informes ─────────────────────────────────────
             var nuevos = new List<InformeMensual>();
 
             foreach (var (publicador, fila, tipo) in filasValidas)
@@ -479,12 +424,32 @@ public class BusInformeMensual : IBusInformeMensual
 
             await _datInforme.SaveChangesAsync();
 
-            var msgNuevos = publicadoresNuevos.Any()
-                ? $" ({publicadoresNuevos.Count} publicador(es) nuevo(s) registrado(s))"
-                : string.Empty;
+            // ── FASE 5: Actualizar tipo del publicador según el informe más reciente ──
+            var hoy = DateTime.UtcNow;
+            var valorFechaHoy = hoy.Year * 12 + hoy.Month;
+            var publicadoresAfectados = filasValidas
+                .Select(f => f.publicador)
+                .DistinctBy(p => p.IdPublicador);
+
+            foreach (var pub in publicadoresAfectados)
+            {
+                var informesPub = await _datInforme.GetByPublicadorAsync(pub.IdPublicador);
+                var masReciente = informesPub
+                    .Where(i => i.Ano * 12 + i.Mes <= valorFechaHoy)
+                    .OrderByDescending(i => i.Ano * 12 + i.Mes)
+                    .FirstOrDefault();
+
+                if (masReciente != null && pub.Tipo != masReciente.Tipo)
+                {
+                    pub.Tipo = masReciente.Tipo;
+                    _datPublicador.Update(pub);
+                }
+            }
+
+            await _datPublicador.SaveChangesAsync(CancellationToken.None);
 
             _logger.LogInformation("Importación Excel: {Exitosos} exitosos.", resultado.Exitosos);
-            return ApiResponse<ResultadoImportacionDto>.Ok(resultado, $"Importación completada{msgNuevos}.");
+            return ApiResponse<ResultadoImportacionDto>.Ok(resultado, "Importación completada.");
         }
         catch (Exception ex)
         {
@@ -520,8 +485,7 @@ public class BusInformeMensual : IBusInformeMensual
     // ── Helpers privados ─────────────────────────────────────────────────────
 
     private static List<string> ValidarInforme(
-        bool participo, bool inactivo, int? horas, int cursos,
-        int ano, int mes, TipoPublicador? tipo = null)
+        int? horas, int cursos, int ano, int mes)
     {
         var errores = new List<string>();
 
@@ -536,18 +500,6 @@ public class BusInformeMensual : IBusInformeMensual
 
         if (horas.HasValue && horas < 0)
             errores.Add("Las horas no pueden ser negativas.");
-
-        if (!inactivo && participo && tipo.HasValue)
-        {
-            var esPrecursor = tipo == TipoPublicador.PrecursorAuxiliar
-                           || tipo == TipoPublicador.PrecursorRegular;
-
-            if (esPrecursor && !horas.HasValue)
-                errores.Add("Las horas son obligatorias para precursores.");
-
-            if (esPrecursor && horas.HasValue && horas == 0)
-                errores.Add("Las horas deben ser mayor a 0 para precursores.");
-        }
 
         return errores;
     }
@@ -565,15 +517,6 @@ public class BusInformeMensual : IBusInformeMensual
             return (null, cursos);
 
         return (horas, cursos);
-    }
-
-    private static bool ValidarGrupoDelArchivo(XLWorkbook workbook, Guid idGrupo)
-    {
-        var wsMeta = workbook.Worksheets.FirstOrDefault(w => w.Name == "Meta");
-        if (wsMeta == null) return true; // Sin hoja Meta no se valida
-
-        var idEnArchivo = wsMeta.Cell(2, 2).GetString();
-        return Guid.TryParse(idEnArchivo, out var id) && id == idGrupo;
     }
 
     private static List<InformeExcelRowDto> LeerExcel(XLWorkbook workbook)
